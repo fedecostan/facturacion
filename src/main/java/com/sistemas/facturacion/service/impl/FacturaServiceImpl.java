@@ -29,8 +29,18 @@ public class FacturaServiceImpl implements FacturaService {
 
     @Override
     public void generarFactura() throws Exception {
-        System.out.println("OBTENIENDO AUTORIZACION");
-        String autorizacion = obtenerAutorizacion();
+        String token = "";
+        try {
+            String factura = solicitarCae(token);
+        } catch (Exception e) {
+            System.out.println("OBTENIENDO AUTORIZACION");
+            String autorizacion = obtenerAutorizacion();
+            String factura = solicitarCae(token);
+        }
+    }
+
+    private String solicitarCae(String token) throws Exception{
+        return "";
     }
 
     public String obtenerAutorizacion() throws Exception {
