@@ -5,6 +5,11 @@ import com.sistemas.facturacion.service.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 
 @RestController
@@ -31,6 +36,9 @@ public class FacturaController {
 
     @Autowired
     private ComprobanteService comprobanteService;
+
+    @Autowired
+    private FacturaService facturaService;
 
     @RequestMapping(value = "/cargarInformacion", method = RequestMethod.GET)
     public @ResponseBody
@@ -100,6 +108,15 @@ public class FacturaController {
     public @ResponseBody
     ComprobanteDTO buscarComprobante(@RequestParam("comp") String tipoComprobante){
         return comprobanteService.buscarUltimoComprobante(tipoComprobante);
+    }
+
+    @RequestMapping(value = "/generarFactura", method = RequestMethod.GET)
+    public void generarFactura(){
+        try {
+            facturaService.generarFactura();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

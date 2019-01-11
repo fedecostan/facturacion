@@ -1,6 +1,6 @@
 package com.sistemas.facturacion.model;
 
-public class Credentials {
+public class WsaaResponse {
 
     private String token;
     private String sign;
