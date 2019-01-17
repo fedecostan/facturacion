@@ -3,6 +3,10 @@ package com.sistemas.facturacion.service.impl;
 import com.sistemas.facturacion.service.FacturaService;
 import com.sistemas.facturacion.service.afip.LoginCMS;
 import com.sistemas.facturacion.service.afip.LoginCMSService;
+import com.sistemas.facturacion.service.afipFac.FEAuthRequest;
+import com.sistemas.facturacion.service.afipFac.FECAERequest;
+import com.sistemas.facturacion.service.afipFac.FECAEResponse;
+import com.sistemas.facturacion.service.afipFac.ServiceSoap;
 import org.apache.axis.encoding.Base64;
 import org.bouncycastle.cms.CMSProcessable;
 import org.bouncycastle.cms.CMSProcessableByteArray;
@@ -40,6 +44,10 @@ public class FacturaServiceImpl implements FacturaService {
     }
 
     private String solicitarCae(String token) throws Exception{
+        ServiceSoap serviceSoap = new com.sistemas.facturacion.service.afipFac.Service().getServiceSoap();
+        FEAuthRequest feAuthRequest = new FEAuthRequest();
+        FECAERequest fecaeRequest = new FECAERequest();
+        FECAEResponse s = serviceSoap.fecaeSolicitar(feAuthRequest,fecaeRequest);
         return "";
     }
 
