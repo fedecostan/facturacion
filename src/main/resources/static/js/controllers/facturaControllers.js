@@ -342,16 +342,24 @@
             };
 
             $scope.enviar = function () {
-                console.log("Fecha: "+formatearFecha($scope.factura.fecha));
-                console.log("Tipo Comprobante: "+$scope.factura.tipoComprobante);
-                console.log("Punto de Venta: "+$scope.factura.puntoVenta);
-                console.log("Numero Comprobante: "+$scope.factura.nroComprobante);
-                console.log("Sindicato: "+$scope.factura.sindicato);
-                console.log("Afiliado: "+$scope.factura.afiliado);
-                console.log("Situacion IVA: "+$scope.factura.situacionIVA);
-                console.log("Condicion de Venta: "+$scope.factura.condicionVenta);
-                console.log("Bonificacion: "+$scope.factura.bonificacion);
-                console.log("Lista Precio: "+$scope.factura.listaPrecio);
+                var data = {
+                    fecha:formatearFecha($scope.factura.fecha),
+                    tipoComprobante:$scope.factura.tipoComprobante,
+                    puntoVenta:$scope.factura.puntoVenta,
+                    numeroComprobante:$scope.factura.nroComprobante,
+                    sindicato:$scope.factura.sindicato,
+                    afiliado:$scope.factura.afiliado,
+                    situacionesIva:$scope.factura.situacionIVA,
+                    condicionesVenta:$scope.factura.condicionVenta,
+                    bonificacion:$scope.factura.bonificacion,
+                    listaPrecio:$scope.factura.listaPrecio,
+                    articulos:$scope.listaArticulos
+                };
+                $http({method: 'POST',url: facturaUrl + 'generarFactura', data: data}).then(
+                    function successCallback(response) {
+
+                    }, function errorCallback(response) {
+                });
             };
 
             $scope.actualizarNuevoTotal = function() {

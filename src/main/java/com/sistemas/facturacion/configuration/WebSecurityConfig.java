@@ -26,7 +26,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/", "/factura").permitAll()
-                .anyRequest().permitAll();
+                .anyRequest().permitAll()
+                .and().csrf().disable();
     }
 
     @Autowired

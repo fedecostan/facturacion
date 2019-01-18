@@ -5,10 +5,8 @@ import com.sistemas.facturacion.repository.AutorizacionRepository;
 import com.sistemas.facturacion.service.FacturaService;
 import com.sistemas.facturacion.service.afip.LoginCMS;
 import com.sistemas.facturacion.service.afip.LoginCMSService;
-import com.sistemas.facturacion.service.afipFac.FEAuthRequest;
-import com.sistemas.facturacion.service.afipFac.FECAERequest;
-import com.sistemas.facturacion.service.afipFac.FECAEResponse;
-import com.sistemas.facturacion.service.afipFac.ServiceSoap;
+import com.sistemas.facturacion.service.afipFac.*;
+import com.sistemas.facturacion.service.dto.FacturaDTO;
 import org.apache.axis.encoding.Base64;
 import org.bouncycastle.cms.CMSProcessable;
 import org.bouncycastle.cms.CMSProcessableByteArray;
@@ -38,30 +36,40 @@ public class FacturaServiceImpl implements FacturaService {
     private AutorizacionRepository autorizacionRepository;
 
     @Override
-    public void generarFactura() {
+    public String generarFactura(FacturaDTO facturaDTO) {
         Autorizacion autorizacion = autorizacionRepository.findFirstByOrderByIdDesc();
         try {
-            String factura = solicitarCae(autorizacion);
+            String factura = solicitarCae(autorizacion, facturaDTO);
         } catch (Exception e) {
             try {
                 System.out.println("OBTENIENDO AUTORIZACION");
                 autorizacion = obtenerAutorizacion();
-                String factura = solicitarCae(autorizacion);
+                String factura = solicitarCae(autorizacion, facturaDTO);
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
         }
+        return "";
     }
 
-    private String solicitarCae(Autorizacion autorizacion) throws Exception{
+    private String solicitarCae(Autorizacion autorizacion, FacturaDTO facturaDTO) throws Exception{
         if (autorizacion==null) throw new Exception();
         ServiceSoap serviceSoap = new com.sistemas.facturacion.service.afipFac.Service().getServiceSoap();
         FEAuthRequest feAuthRequest = new FEAuthRequest();
         feAuthRequest.setToken(autorizacion.getToken());
         feAuthRequest.setSign(autorizacion.getSign());
-        feAuthRequest.setCuit(33693450239L);
+        feAuthRequest.setCuit(27149025893L);
         FECAERequest fecaeRequest = new FECAERequest();
+        FECAECabRequest fecaeCabRequest = new FECAECabRequest();
+        fecaeCabRequest.setCantReg(1);
+        fecaeCabRequest.setCbteTipo(1);
+        fecaeCabRequest.setPtoVta(1);
+        fecaeRequest.setFeCabReq(fecaeCabRequest);
+        ArrayOfFECAEDetRequest arrayOfFECAEDetRequest = new ArrayOfFECAEDetRequest();
+        fecaeRequest.setFeDetReq(arrayOfFECAEDetRequest);
         FECAEResponse s = serviceSoap.fecaeSolicitar(feAuthRequest,fecaeRequest);
+        System.out.println(s);
+        if (s.getErrors().getErr().get(0).getCode() == 600) throw new Exception();
         return s.toString();
     }
 

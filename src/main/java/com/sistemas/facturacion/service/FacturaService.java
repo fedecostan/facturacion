@@ -1,7 +1,9 @@
 package com.sistemas.facturacion.service;
 
+import com.sistemas.facturacion.service.dto.FacturaDTO;
+
 public interface FacturaService {
 
-    void generarFactura();
+    String generarFactura(FacturaDTO facturaDTO);
 
 }
