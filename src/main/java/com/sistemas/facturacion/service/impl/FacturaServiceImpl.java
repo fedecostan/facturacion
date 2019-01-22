@@ -55,19 +55,49 @@ public class FacturaServiceImpl implements FacturaService {
     private String solicitarCae(Autorizacion autorizacion, FacturaDTO facturaDTO) throws Exception{
         if (autorizacion==null) throw new Exception();
         ServiceSoap serviceSoap = new com.sistemas.facturacion.service.afipFac.Service().getServiceSoap();
-        FEAuthRequest feAuthRequest = new FEAuthRequest();
-        feAuthRequest.setToken(autorizacion.getToken());
-        feAuthRequest.setSign(autorizacion.getSign());
-        feAuthRequest.setCuit(27149025893L);
-        FECAERequest fecaeRequest = new FECAERequest();
-        FECAECabRequest fecaeCabRequest = new FECAECabRequest();
-        fecaeCabRequest.setCantReg(1);
-        fecaeCabRequest.setCbteTipo(1);
-        fecaeCabRequest.setPtoVta(1);
-        fecaeRequest.setFeCabReq(fecaeCabRequest);
+        FEAuthRequest autenticacion = new FEAuthRequest();
+        autenticacion.setToken(autorizacion.getToken());
+        autenticacion.setSign(autorizacion.getSign());
+        autenticacion.setCuit(27149025893L);
+        FECAERequest request = new FECAERequest();
+        FECAECabRequest cabecera = new FECAECabRequest();
+        cabecera.setCantReg(1);
+        cabecera.setPtoVta(30); //Obtener de factura
+        cabecera.setCbteTipo(1); //Obtener de factura
+        request.setFeCabReq(cabecera);
         ArrayOfFECAEDetRequest arrayOfFECAEDetRequest = new ArrayOfFECAEDetRequest();
-        fecaeRequest.setFeDetReq(arrayOfFECAEDetRequest);
-        FECAEResponse s = serviceSoap.fecaeSolicitar(feAuthRequest,fecaeRequest);
+        FECAEDetRequest detalle = new FECAEDetRequest();
+        detalle.setConcepto(2); //1- Producto 2- Servicio 3- Producto y Servicio
+        detalle.setDocTipo(80); //Obtener del afiliado
+        detalle.setDocNro(30663791377L); //Obtener del afiliado
+        detalle.setCbteDesde(2); //Ultimo comprobante + 1
+        detalle.setCbteHasta(2); //Ultimo comprobante + 1
+        detalle.setCbteFch("20190122"); //Fecha comprobante
+        detalle.setImpTotal(1000); //Total a facturar
+        detalle.setImpTotConc(0); //Concepto no gravado
+        detalle.setImpNeto(826.44); //Importe neto sin IVA
+        detalle.setImpOpEx(0); //Excentas siempre 0
+        detalle.setImpIVA(173.56);
+        detalle.setImpTrib(0);
+        detalle.setFchServDesde("20190122"); //NO ES OBLIGATORIO
+        detalle.setFchServHasta("20190122"); //NO ES OBLIGATORIO
+        detalle.setFchVtoPago("20190122"); //NO ES OBLIGATORIO
+        detalle.setMonId("PES"); //CODIGO MONEDA
+        detalle.setMonCotiz(1); //COTIZACION MONEDA
+        // detalle.setCbtesAsoc(); //NO ES OBLIGATORIO
+        // detalle.setTributos(); //NO ES OBLIGATORIO
+        ArrayOfAlicIva arrayOfAlicIva = new ArrayOfAlicIva();
+        AlicIva alicIva = new AlicIva();
+        alicIva.setBaseImp(826.44);
+        alicIva.setImporte(173.56);
+        alicIva.setId(5);
+        arrayOfAlicIva.getAlicIva().add(alicIva);
+        detalle.setIva(arrayOfAlicIva); //NO ES OBLIGATORIO
+        // detalle.setOpcionales(); //NO ES OBLIGATORIO
+        // detalle.setCompradores(); //NO ES OBLIGATORIO
+        arrayOfFECAEDetRequest.getFECAEDetRequest().add(detalle);
+        request.setFeDetReq(arrayOfFECAEDetRequest);
+        FECAEResponse s = serviceSoap.fecaeSolicitar(autenticacion,request);
         System.out.println(s);
         if (s.getErrors().getErr().get(0).getCode() == 600) throw new Exception();
         return s.toString();
