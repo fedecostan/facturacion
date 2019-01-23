@@ -1,7 +1,9 @@
 package com.sistemas.facturacion.service.impl;
 
 import com.sistemas.facturacion.model.Autorizacion;
+import com.sistemas.facturacion.model.Titular;
 import com.sistemas.facturacion.repository.AutorizacionRepository;
+import com.sistemas.facturacion.repository.TitularRepository;
 import com.sistemas.facturacion.service.FacturaService;
 import com.sistemas.facturacion.service.afip.LoginCMS;
 import com.sistemas.facturacion.service.afip.LoginCMSService;
@@ -36,6 +38,9 @@ public class FacturaServiceImpl implements FacturaService {
     @Autowired
     private AutorizacionRepository autorizacionRepository;
 
+    @Autowired
+    private TitularRepository titularRepository;
+
     @Value("${cuit}")
     private Long cuit;
 
@@ -47,6 +52,9 @@ public class FacturaServiceImpl implements FacturaService {
 
     @Value("${cert.path}")
     private String path;
+
+    @Value("${cae.concept}")
+    private int concept;
 
     @Override
     public String generarFactura(FacturaDTO facturaDTO) {
@@ -65,6 +73,10 @@ public class FacturaServiceImpl implements FacturaService {
         return "";
     }
 
+    private Long obtenerUltimoComprobante() {
+        return 1L;
+    }
+
     private String solicitarCae(Autorizacion autorizacion, FacturaDTO facturaDTO) throws Exception{
         if (autorizacion==null) throw new Exception();
         ServiceSoap serviceSoap = new com.sistemas.facturacion.service.afipFac.Service().getServiceSoap();
@@ -79,7 +91,10 @@ public class FacturaServiceImpl implements FacturaService {
         cabecera.setCbteTipo(12); //Obtener de factura
         request.setFeCabReq(cabecera);
         ArrayOfFECAEDetRequest arrayOfFECAEDetRequest = new ArrayOfFECAEDetRequest();
-        FECAEDetRequest detalle = new FECAEDetRequest();
+        FECAEDetRequest detalle = createDetalle(facturaDTO);
+
+
+
 //        detalle.setConcepto(2); //1- Producto 2- Servicio 3- Producto y Servicio
 //        detalle.setDocTipo(80); //Obtener del afiliado
 //        detalle.setDocNro(30663791377L); //Obtener del afiliado
@@ -152,6 +167,46 @@ public class FacturaServiceImpl implements FacturaService {
         } catch (Exception e){}
         if (error) throw new Exception();
         return s.toString();
+    }
+
+    private FECAEDetRequest createDetalle(FacturaDTO facturaDTO) {
+        FECAEDetRequest detalle = new FECAEDetRequest();
+        detalle.setConcepto(concept); //1- Producto 2- Servicio 3- Producto y Servicio
+        Titular titular = titularRepository.findByNumeroRegistro(facturaDTO.getAfiliado());
+        detalle.setDocTipo(Integer.parseInt(titular.getTipoDocumento()));
+        detalle.setDocNro(Long.valueOf(titular.getNumeroDocumento()));
+        Long numeroComprobante = obtenerUltimoComprobante()+1;
+        detalle.setCbteDesde(numeroComprobante);
+        detalle.setCbteHasta(numeroComprobante);
+        detalle.setCbteFch(facturaDTO.getFecha());
+        detalle.setImpTotal(Double.parseDouble(facturaDTO.getTotal()));
+        detalle.setImpNeto(0);
+        detalle.setImpTotConc(0);
+        detalle.setImpIVA(0);
+        detalle.setImpOpEx(0);
+        if (facturaDTO.getTipoComprobante().equals("12")){
+            Double total = Double.parseDouble(facturaDTO.getTotal());
+            Double iva = Double.parseDouble(facturaDTO.getSituacionesIva());
+            Double impNeto = total/((iva+100)/100);
+            detalle.setImpNeto(impNeto);
+            detalle.setImpIVA(total-impNeto);
+            ArrayOfAlicIva arrayOfAlicIva = new ArrayOfAlicIva();
+            AlicIva alicIva = new AlicIva();
+            alicIva.setBaseImp(impNeto);
+            alicIva.setImporte(total-impNeto);
+            alicIva.setId(5);
+            arrayOfAlicIva.getAlicIva().add(alicIva);
+            detalle.setIva(arrayOfAlicIva);
+        }
+        detalle.setImpTrib(0);
+        if (concept==1){
+            detalle.setFchServDesde(facturaDTO.getFecha());
+            detalle.setFchServHasta(facturaDTO.getFecha());
+            detalle.setFchVtoPago(facturaDTO.getFecha());
+        }
+        detalle.setMonId("PES");
+        detalle.setMonCotiz(1);
+        return detalle;
     }
 
     public Autorizacion obtenerAutorizacion() throws Exception {
