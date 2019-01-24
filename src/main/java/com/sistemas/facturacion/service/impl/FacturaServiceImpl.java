@@ -179,14 +179,14 @@ public class FacturaServiceImpl implements FacturaService {
         detalle.setCbteDesde(numeroComprobante);
         detalle.setCbteHasta(numeroComprobante);
         detalle.setCbteFch(facturaDTO.getFecha());
-        detalle.setImpTotal(Double.parseDouble(facturaDTO.getTotal()));
+        detalle.setImpTotal(facturaDTO.getTotal());
         detalle.setImpNeto(0);
         detalle.setImpTotConc(0);
         detalle.setImpIVA(0);
         detalle.setImpOpEx(0);
-        if (facturaDTO.getTipoComprobante().equals("12")){
-            Double total = Double.parseDouble(facturaDTO.getTotal());
-            Double iva = Double.parseDouble(facturaDTO.getSituacionesIva());
+        if (facturaDTO.getTipoComprobante() == 12){
+            Double total = facturaDTO.getTotal();
+            Double iva = facturaDTO.getSituacionesIva();
             Double impNeto = total/((iva+100)/100);
             detalle.setImpNeto(impNeto);
             detalle.setImpIVA(total-impNeto);
