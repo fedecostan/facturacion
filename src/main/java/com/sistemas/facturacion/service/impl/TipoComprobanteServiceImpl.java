@@ -24,7 +24,7 @@ public class TipoComprobanteServiceImpl implements TipoComprobanteService {
             if (tipoComprobante.getCodigoAfip()!=null && tipoComprobante.getCodigoAfip() > 0) {
                 TipoComprobanteDTO tipoComprobanteDTO = new TipoComprobanteDTO();
                 tipoComprobanteDTO.setName(tipoComprobante.getDescripcion());
-                tipoComprobanteDTO.setValue(tipoComprobante.getCodigo());
+                tipoComprobanteDTO.setValue(tipoComprobante.getCodigoAfip());
                 tipoComprobanteDTOList.add(tipoComprobanteDTO);
             }
         }
@@ -32,8 +32,8 @@ public class TipoComprobanteServiceImpl implements TipoComprobanteService {
     }
 
     @Override
-    public TipoComprobanteDTO obtenerleyenda(String codigo) {
-        TipoComprobante tipoComprobante = tipoComprobanteRepository.findByCodigo(codigo);
+    public TipoComprobanteDTO obtenerleyenda(Integer codigoAfip) {
+        TipoComprobante tipoComprobante = tipoComprobanteRepository.findByCodigoAfip(codigoAfip);
         TipoComprobanteDTO tipoComprobanteDTO = new TipoComprobanteDTO();
         tipoComprobanteDTO.setName(tipoComprobante.getLeyenda());
         return tipoComprobanteDTO;

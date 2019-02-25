@@ -1,8 +1,10 @@
 package com.sistemas.facturacion.service.impl;
 
 import com.sistemas.facturacion.model.Autorizacion;
+import com.sistemas.facturacion.model.Delegacion;
 import com.sistemas.facturacion.model.Titular;
 import com.sistemas.facturacion.repository.AutorizacionRepository;
+import com.sistemas.facturacion.repository.DelegacionRepository;
 import com.sistemas.facturacion.repository.TitularRepository;
 import com.sistemas.facturacion.service.FacturaService;
 import com.sistemas.facturacion.service.afip.LoginCMS;
@@ -23,6 +25,7 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.FileInputStream;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.CertStore;
@@ -41,6 +44,9 @@ public class FacturaServiceImpl implements FacturaService {
     @Autowired
     private TitularRepository titularRepository;
 
+    @Autowired
+    private DelegacionRepository delegacionRepository;
+
     @Value("${cuit}")
     private Long cuit;
 
@@ -58,23 +64,24 @@ public class FacturaServiceImpl implements FacturaService {
 
     @Override
     public String generarFactura(FacturaDTO facturaDTO) {
-        Autorizacion autorizacion = autorizacionRepository.findFirstByOrderByIdDesc();
+        String factura = "";
         try {
-            String factura = solicitarCae(autorizacion, facturaDTO);
-        } catch (Exception e) {
-            try {
-                System.out.println("OBTENIENDO AUTORIZACION");
-                autorizacion = obtenerAutorizacion();
-                String factura = solicitarCae(autorizacion, facturaDTO);
-            } catch (Exception e1) {
-                e1.printStackTrace();
-            }
+            Autorizacion autorizacion = obtenerAutorizacion();
+            factura = solicitarCae(autorizacion, facturaDTO);
+        } catch (Exception e){
+
         }
-        return "";
+        return factura;
     }
 
-    private Long obtenerUltimoComprobante() {
-        return 1L;
+    private Long obtenerUltimoComprobante(Autorizacion autorizacion, FacturaDTO facturaDTO) {
+        ServiceSoap serviceSoap = new com.sistemas.facturacion.service.afipFac.Service().getServiceSoap();
+        FEAuthRequest autenticacion = new FEAuthRequest();
+        autenticacion.setToken(autorizacion.getToken());
+        autenticacion.setSign(autorizacion.getSign());
+        autenticacion.setCuit(cuit);
+        FERecuperaLastCbteResponse feRecuperaLastCbteResponse = serviceSoap.feCompUltimoAutorizado(autenticacion,Integer.parseInt(facturaDTO.getPuntoVenta()),Integer.parseInt(facturaDTO.getTipoComprobante()));
+        return new Long(feRecuperaLastCbteResponse.getCbteNro());
     }
 
     private String solicitarCae(Autorizacion autorizacion, FacturaDTO facturaDTO) throws Exception{
@@ -87,76 +94,11 @@ public class FacturaServiceImpl implements FacturaService {
         FECAERequest request = new FECAERequest();
         FECAECabRequest cabecera = new FECAECabRequest();
         cabecera.setCantReg(1);
-        cabecera.setPtoVta(30); //Obtener de factura
-        cabecera.setCbteTipo(12); //Obtener de factura
+        cabecera.setPtoVta(Integer.parseInt(facturaDTO.getPuntoVenta())); //Obtener de factura
+        cabecera.setCbteTipo(Integer.parseInt(facturaDTO.getTipoComprobante())); //Obtener de factura
         request.setFeCabReq(cabecera);
         ArrayOfFECAEDetRequest arrayOfFECAEDetRequest = new ArrayOfFECAEDetRequest();
-        FECAEDetRequest detalle = createDetalle(facturaDTO);
-
-
-
-//        detalle.setConcepto(2); //1- Producto 2- Servicio 3- Producto y Servicio
-//        detalle.setDocTipo(80); //Obtener del afiliado
-//        detalle.setDocNro(30663791377L); //Obtener del afiliado
-//        detalle.setCbteDesde(2); //Ultimo comprobante + 1
-//        detalle.setCbteHasta(2); //Ultimo comprobante + 1
-//        detalle.setCbteFch("20190122"); //Fecha comprobante
-//        detalle.setImpTotal(1000); //Total a facturar
-//        detalle.setImpTotConc(0); //Concepto no gravado
-//        detalle.setImpNeto(826.44); //Importe neto sin IVA
-//        detalle.setImpOpEx(0); //Excentas siempre 0
-//        detalle.setImpIVA(173.56);
-//        detalle.setImpTrib(0);
-//        detalle.setFchServDesde("20190122"); //NO ES OBLIGATORIO
-//        detalle.setFchServHasta("20190122"); //NO ES OBLIGATORIO
-//        detalle.setFchVtoPago("20190122"); //NO ES OBLIGATORIO
-//        detalle.setMonId("PES"); //CODIGO MONEDA
-//        detalle.setMonCotiz(1); //COTIZACION MONEDA
-//        // detalle.setCbtesAsoc(); //NO ES OBLIGATORIO
-//        // detalle.setTributos(); //NO ES OBLIGATORIO
-//        ArrayOfAlicIva arrayOfAlicIva = new ArrayOfAlicIva();
-//        AlicIva alicIva = new AlicIva();
-//        alicIva.setBaseImp(826.44);
-//        alicIva.setImporte(173.56);
-//        alicIva.setId(5);
-//        arrayOfAlicIva.getAlicIva().add(alicIva);
-//        detalle.setIva(arrayOfAlicIva); //NO ES OBLIGATORIO
-//        // detalle.setOpcionales(); //NO ES OBLIGATORIO
-//        // detalle.setCompradores(); //NO ES OBLIGATORIO
-
-
-
-        detalle.setConcepto(1); //1- Producto 2- Servicio 3- Producto y Servicio
-        detalle.setDocTipo(80); //Obtener del afiliado
-        detalle.setDocNro(20381579906L); //Obtener del afiliado
-        detalle.setCbteDesde(2); //Ultimo comprobante + 1
-        detalle.setCbteHasta(2); //Ultimo comprobante + 1
-        detalle.setCbteFch("20190122"); //Fecha comprobante
-        detalle.setImpTotal(1000); //Total a facturar
-        detalle.setImpTotConc(0); //Concepto no gravado
-        detalle.setImpNeto(1000); //Importe neto sin IVA
-        detalle.setImpOpEx(0); //Excentas siempre 0
-        detalle.setImpIVA(0);
-        detalle.setImpTrib(0);
-//        detalle.setFchServDesde("20190122"); //NO ES OBLIGATORIO
-//        detalle.setFchServHasta("20190122"); //NO ES OBLIGATORIO
-//        detalle.setFchVtoPago("20190122"); //NO ES OBLIGATORIO
-        detalle.setMonId("PES"); //CODIGO MONEDA
-        detalle.setMonCotiz(1); //COTIZACION MONEDA
-        // detalle.setCbtesAsoc(); //NO ES OBLIGATORIO
-        // detalle.setTributos(); //NO ES OBLIGATORIO
-//        ArrayOfAlicIva arrayOfAlicIva = new ArrayOfAlicIva();
-//        AlicIva alicIva = new AlicIva();
-//        alicIva.setBaseImp(826.44);
-//        alicIva.setImporte(173.56);
-//        alicIva.setId(5);
-//        arrayOfAlicIva.getAlicIva().add(alicIva);
-//        detalle.setIva(arrayOfAlicIva); //NO ES OBLIGATORIO
-        // detalle.setOpcionales(); //NO ES OBLIGATORIO
-        // detalle.setCompradores(); //NO ES OBLIGATORIO
-
-
-
+        FECAEDetRequest detalle = createDetalle(autorizacion, facturaDTO);
         arrayOfFECAEDetRequest.getFECAEDetRequest().add(detalle);
         request.setFeDetReq(arrayOfFECAEDetRequest);
         FECAEResponse s = serviceSoap.fecaeSolicitar(autenticacion,request);
@@ -169,24 +111,30 @@ public class FacturaServiceImpl implements FacturaService {
         return s.toString();
     }
 
-    private FECAEDetRequest createDetalle(FacturaDTO facturaDTO) {
+    private FECAEDetRequest createDetalle(Autorizacion autorizacion, FacturaDTO facturaDTO) {
         FECAEDetRequest detalle = new FECAEDetRequest();
         detalle.setConcepto(concept); //1- Producto 2- Servicio 3- Producto y Servicio
-        Titular titular = titularRepository.findByNumeroRegistro(facturaDTO.getAfiliado());
-        detalle.setDocTipo(Integer.parseInt(titular.getTipoDocumento()));
-        detalle.setDocNro(Long.valueOf(titular.getNumeroDocumento()));
-        Long numeroComprobante = obtenerUltimoComprobante()+1;
+        if (facturaDTO.getAfiliado()!=null) {
+            Titular titular = titularRepository.findByNumeroRegistro(facturaDTO.getAfiliado());
+            detalle.setDocTipo(Integer.parseInt(titular.getTipoDocumento()));
+            detalle.setDocNro(Long.valueOf(titular.getNumeroDocumento()));
+        } else {
+            Delegacion delegacion = delegacionRepository.findByCodigo(facturaDTO.getSindicato());
+//            detalle.setDocTipo(Integer.parseInt(delegacion.));
+//            detalle.setDocNro(Long.valueOf(delegacion.getNumeroDocumento()));
+        }
+        Long numeroComprobante = obtenerUltimoComprobante(autorizacion, facturaDTO)+1;
         detalle.setCbteDesde(numeroComprobante);
         detalle.setCbteHasta(numeroComprobante);
         detalle.setCbteFch(facturaDTO.getFecha());
-        detalle.setImpTotal(facturaDTO.getTotal());
+        detalle.setImpTotal(Double.parseDouble(facturaDTO.getTotal()));
         detalle.setImpNeto(0);
         detalle.setImpTotConc(0);
         detalle.setImpIVA(0);
         detalle.setImpOpEx(0);
-        if (facturaDTO.getTipoComprobante() == 12){
-            Double total = facturaDTO.getTotal();
-            Double iva = facturaDTO.getSituacionesIva();
+        if (Integer.parseInt(facturaDTO.getTipoComprobante()) == 12){
+            Double total = Double.parseDouble(facturaDTO.getTotal());
+            Double iva = Double.parseDouble(facturaDTO.getSituacionesIva());
             Double impNeto = total/((iva+100)/100);
             detalle.setImpNeto(impNeto);
             detalle.setImpIVA(total-impNeto);
@@ -247,13 +195,17 @@ public class FacturaServiceImpl implements FacturaService {
         CMSProcessable data = new CMSProcessableByteArray(request.getBytes());
         CMSSignedData signed = gen.generate(data, true, "BC");
         byte[] asn1_cms = signed.getEncoded();
-        String response = invoke_wsaa(asn1_cms);
-        System.out.println(response);
         Autorizacion autorizacion = new Autorizacion();
-        autorizacion.setToken(response.substring(response.indexOf("<token>")+7,response.indexOf("</token>")));
-        autorizacion.setSign(response.substring(response.indexOf("<sign>")+6,response.indexOf("</sign>")));
-        autorizacion.setFechaGeneracion(new Date());
-        autorizacionRepository.save(autorizacion);
+        try{
+            String response = invoke_wsaa(asn1_cms);
+            System.out.println(response);
+            autorizacion.setToken(response.substring(response.indexOf("<token>")+7,response.indexOf("</token>")));
+            autorizacion.setSign(response.substring(response.indexOf("<sign>")+6,response.indexOf("</sign>")));
+            autorizacion.setFechaGeneracion(new Date());
+            autorizacionRepository.save(autorizacion);
+        } catch (Exception e){
+            autorizacion = autorizacionRepository.findFirstByOrderByIdDesc();
+        }
         return autorizacion;
     }
 

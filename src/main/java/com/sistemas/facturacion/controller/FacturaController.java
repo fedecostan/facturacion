@@ -47,7 +47,7 @@ public class FacturaController {
 
     @RequestMapping(value = "/cargarLeyendaComprobante", method = RequestMethod.GET)
     public @ResponseBody
-    TipoComprobanteDTO cargarLeyendaComprobante(@RequestParam("codigo") String codigo){
+    TipoComprobanteDTO cargarLeyendaComprobante(@RequestParam("codigo") Integer codigo){
         return tipoComprobanteService.obtenerleyenda(codigo);
     }
 
@@ -99,11 +99,11 @@ public class FacturaController {
         return articuloCService.obtenerPorId(id, fecha);
     }
 
-    @RequestMapping(value = "/buscarComprobante", method = RequestMethod.GET)
-    public @ResponseBody
-    ComprobanteDTO buscarComprobante(@RequestParam("comp") String tipoComprobante){
-        return comprobanteService.buscarUltimoComprobante(tipoComprobante);
-    }
+//    @RequestMapping(value = "/buscarComprobante", method = RequestMethod.GET)
+//    public @ResponseBody
+//    ComprobanteDTO buscarComprobante(@RequestParam("comp") String tipoComprobante){
+//        return comprobanteService.buscarUltimoComprobante(tipoComprobante);
+//    }
 
     @RequestMapping(value = "/generarFactura", method = RequestMethod.POST)
     public String generarFactura(@RequestBody FacturaDTO facturaDTO){

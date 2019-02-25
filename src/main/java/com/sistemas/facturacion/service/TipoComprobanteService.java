@@ -8,5 +8,5 @@ public interface TipoComprobanteService {
 
     List<TipoComprobanteDTO> obtenerTodos();
 
-    TipoComprobanteDTO obtenerleyenda(String codigo);
+    TipoComprobanteDTO obtenerleyenda(Integer codigo);
 }

@@ -5,17 +5,17 @@ import java.util.List;
 public class FacturaDTO {
 
     private String fecha;
-    private int tipoComprobante;
-    private int puntoVenta;
-    private long numeroComprobante;
+    private String tipoComprobante;
+    private String puntoVenta;
+    private String numeroComprobante;
     private String sindicato;
     private String afiliado;
-    private Double situacionesIva;
+    private String situacionesIva;
     private String condicionesVenta;
-    private Double bonificacion;
+    private String bonificacion;
     private String listaPrecio;
-    private Double total;
-    private List<ArticuloFacturaDTO> articulos;
+    private String total;
+//    private List<ArticuloFacturaDTO> articulos;
 
     public String getFecha() {
         return fecha;
@@ -25,27 +25,27 @@ public class FacturaDTO {
         this.fecha = fecha;
     }
 
-    public int getTipoComprobante() {
+    public String getTipoComprobante() {
         return tipoComprobante;
     }
 
-    public void setTipoComprobante(int tipoComprobante) {
+    public void setTipoComprobante(String tipoComprobante) {
         this.tipoComprobante = tipoComprobante;
     }
 
-    public int getPuntoVenta() {
+    public String getPuntoVenta() {
         return puntoVenta;
     }
 
-    public void setPuntoVenta(int puntoVenta) {
+    public void setPuntoVenta(String puntoVenta) {
         this.puntoVenta = puntoVenta;
     }
 
-    public long getNumeroComprobante() {
+    public String getNumeroComprobante() {
         return numeroComprobante;
     }
 
-    public void setNumeroComprobante(long numeroComprobante) {
+    public void setNumeroComprobante(String numeroComprobante) {
         this.numeroComprobante = numeroComprobante;
     }
 
@@ -65,11 +65,11 @@ public class FacturaDTO {
         this.afiliado = afiliado;
     }
 
-    public Double getSituacionesIva() {
+    public String getSituacionesIva() {
         return situacionesIva;
     }
 
-    public void setSituacionesIva(Double situacionesIva) {
+    public void setSituacionesIva(String situacionesIva) {
         this.situacionesIva = situacionesIva;
     }
 
@@ -81,11 +81,11 @@ public class FacturaDTO {
         this.condicionesVenta = condicionesVenta;
     }
 
-    public Double getBonificacion() {
+    public String getBonificacion() {
         return bonificacion;
     }
 
-    public void setBonificacion(Double bonificacion) {
+    public void setBonificacion(String bonificacion) {
         this.bonificacion = bonificacion;
     }
 
@@ -97,19 +97,19 @@ public class FacturaDTO {
         this.listaPrecio = listaPrecio;
     }
 
-    public Double getTotal() {
+    public String getTotal() {
         return total;
     }
 
-    public void setTotal(Double total) {
+    public void setTotal(String total) {
         this.total = total;
     }
 
-    public List<ArticuloFacturaDTO> getArticulos() {
-        return articulos;
-    }
-
-    public void setArticulos(List<ArticuloFacturaDTO> articulos) {
-        this.articulos = articulos;
-    }
+//    public List<ArticuloFacturaDTO> getArticulos() {
+//        return articulos;
+//    }
+//
+//    public void setArticulos(List<ArticuloFacturaDTO> articulos) {
+//        this.articulos = articulos;
+//    }
 }

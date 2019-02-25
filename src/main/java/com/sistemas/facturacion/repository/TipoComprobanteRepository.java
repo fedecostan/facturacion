@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface TipoComprobanteRepository extends JpaRepository<TipoComprobante, Long> {
 
-    TipoComprobante findByCodigo(String codigo);
+    TipoComprobante findByCodigoAfip(Integer codigoAfip);
 
     @Query(value = "SELECT * FROM tcomprob", nativeQuery = true)
     List<TipoComprobante> findTodos();
