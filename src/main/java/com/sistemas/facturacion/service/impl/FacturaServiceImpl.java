@@ -2,8 +2,11 @@ package com.sistemas.facturacion.service.impl;
 
 import com.sistemas.facturacion.model.Autorizacion;
 import com.sistemas.facturacion.model.Delegacion;
+import com.sistemas.facturacion.model.TipoDocumento;
 import com.sistemas.facturacion.model.Titular;
 import com.sistemas.facturacion.repository.DelegacionRepository;
+import com.sistemas.facturacion.repository.EmpresaRepository;
+import com.sistemas.facturacion.repository.TipoDocumentoRepository;
 import com.sistemas.facturacion.repository.TitularRepository;
 import com.sistemas.facturacion.service.FacturaService;
 import com.sistemas.facturacion.service.afipFac.*;
@@ -19,13 +22,16 @@ public class FacturaServiceImpl extends AfipWS implements FacturaService {
     private TitularRepository titularRepository;
 
     @Autowired
+    private TipoDocumentoRepository tipoDocumentoRepository;
+
+    @Autowired
+    private EmpresaRepository empresaRepository;
+
+    @Autowired
     private DelegacionRepository delegacionRepository;
 
     @Value("${cuit}")
     private Long cuit;
-
-    @Value("${cae.concept}")
-    private int concept;
 
     @Override
     public String generarFactura(FacturaDTO facturaDTO) {
@@ -78,45 +84,28 @@ public class FacturaServiceImpl extends AfipWS implements FacturaService {
 
     private FECAEDetRequest createDetalle(Autorizacion autorizacion, FacturaDTO facturaDTO) {
         FECAEDetRequest detalle = new FECAEDetRequest();
-        detalle.setConcepto(concept); //1- Producto 2- Servicio 3- Producto y Servicio
+        detalle.setConcepto(empresaRepository.findAll().get(0).getConcepto()); //1- Producto 2- Servicio 3- Producto y Servicio
         if (facturaDTO.getAfiliado()!=null) {
             Titular titular = titularRepository.findByNumeroRegistro(facturaDTO.getAfiliado());
-            detalle.setDocTipo(Integer.parseInt(titular.getTipoDocumento()));
+            TipoDocumento tipoDocumento = tipoDocumentoRepository.findByCodigo(titular.getTipoDocumento());
+            detalle.setDocTipo(tipoDocumento.getCodigoAfip());
             detalle.setDocNro(Long.valueOf(titular.getNumeroDocumento()));
         } else {
             Delegacion delegacion = delegacionRepository.findByCodigo(facturaDTO.getSindicato());
-//            detalle.setDocTipo(Integer.parseInt(delegacion.));
-//            detalle.setDocNro(Long.valueOf(delegacion.getNumeroDocumento()));
+            TipoDocumento tipoDocumento = tipoDocumentoRepository.findByCodigo(delegacion.getTipoDocumento());
+            detalle.setDocTipo(tipoDocumento.getCodigoAfip());
+            detalle.setDocNro(Long.valueOf(delegacion.getCuit()));
         }
         Long numeroComprobante = obtenerUltimoComprobante(autorizacion, facturaDTO)+1;
         detalle.setCbteDesde(numeroComprobante);
         detalle.setCbteHasta(numeroComprobante);
         detalle.setCbteFch(facturaDTO.getFecha());
         detalle.setImpTotal(Double.parseDouble(facturaDTO.getTotal()));
-        detalle.setImpNeto(0);
+        detalle.setImpNeto(Double.parseDouble(facturaDTO.getTotal()));
         detalle.setImpTotConc(0);
         detalle.setImpIVA(0);
         detalle.setImpOpEx(0);
-        if (Integer.parseInt(facturaDTO.getTipoComprobante()) == 12){
-            Double total = Double.parseDouble(facturaDTO.getTotal());
-            Double iva = Double.parseDouble(facturaDTO.getSituacionesIva());
-            Double impNeto = total/((iva+100)/100);
-            detalle.setImpNeto(impNeto);
-            detalle.setImpIVA(total-impNeto);
-            ArrayOfAlicIva arrayOfAlicIva = new ArrayOfAlicIva();
-            AlicIva alicIva = new AlicIva();
-            alicIva.setBaseImp(impNeto);
-            alicIva.setImporte(total-impNeto);
-            alicIva.setId(5);
-            arrayOfAlicIva.getAlicIva().add(alicIva);
-            detalle.setIva(arrayOfAlicIva);
-        }
         detalle.setImpTrib(0);
-        if (concept==1){
-            detalle.setFchServDesde(facturaDTO.getFecha());
-            detalle.setFchServHasta(facturaDTO.getFecha());
-            detalle.setFchVtoPago(facturaDTO.getFecha());
-        }
         detalle.setMonId("PES");
         detalle.setMonCotiz(1);
         return detalle;

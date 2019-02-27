@@ -82,6 +82,9 @@ public class Delegacion {
     @Column(name = "sitiva")
     private String situacionIva;
 
+    @Column(name = "tipodoc")
+    private String tipoDocumento;
+
     public String getCodigo() {
         return codigo;
     }
@@ -272,5 +275,13 @@ public class Delegacion {
 
     public void setSituacionIva(String situacionIva) {
         this.situacionIva = situacionIva;
+    }
+
+    public String getTipoDocumento() {
+        return tipoDocumento;
+    }
+
+    public void setTipoDocumento(String tipoDocumento) {
+        this.tipoDocumento = tipoDocumento;
     }
 }
