@@ -5,8 +5,8 @@
 
     <groupId>com.sistemas.facturacion</groupId>
     <artifactId>facturacion-api</artifactId>
-    <version>0.0.1</version>
-    <packaging>war</packaging>
+    <version>1.0</version>
+    <packaging>jar</packaging>
 
     <name>facturacion-api</name>
 

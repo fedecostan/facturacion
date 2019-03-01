@@ -106,7 +106,7 @@ public class FacturaController {
 //    }
 
     @RequestMapping(value = "/generarFactura", method = RequestMethod.POST)
-    public String generarFactura(@RequestBody FacturaDTO facturaDTO){
+    public FacturaResponseDTO generarFactura(@RequestBody FacturaDTO facturaDTO){
         return facturaService.generarFactura(facturaDTO);
     }
 

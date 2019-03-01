@@ -346,14 +346,13 @@
                     fecha:formatearFecha($scope.factura.fecha),
                     tipoComprobante:$scope.factura.tipoComprobante,
                     puntoVenta:$scope.factura.puntoVenta,
-//                    numeroComprobante:$scope.factura.nroComprobante,
                     sindicato:$scope.factura.sindicato,
                     afiliado:$scope.factura.afiliado,
                     situacionesIva:$scope.factura.situacionIVA,
                     condicionesVenta:$scope.factura.condicionVenta,
                     bonificacion:$scope.factura.bonificacion,
-                    listaPrecio:$scope.factura.listaPrecio
-//                    articulos:$scope.listaArticulos
+                    listaPrecio:$scope.factura.listaPrecio,
+                    total:$scope.totales.total
                 };
                 $http({method: 'POST',url: facturaUrl + 'generarFactura', data: data}).then(
                     function successCallback(response) {

@@ -11,6 +11,7 @@ import com.sistemas.facturacion.repository.TitularRepository;
 import com.sistemas.facturacion.service.FacturaService;
 import com.sistemas.facturacion.service.afipFac.*;
 import com.sistemas.facturacion.service.dto.FacturaDTO;
+import com.sistemas.facturacion.service.dto.FacturaResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -34,52 +35,42 @@ public class FacturaServiceImpl extends AfipWS implements FacturaService {
     private Long cuit;
 
     @Override
-    public String generarFactura(FacturaDTO facturaDTO) {
-        String factura = "";
+    public FacturaResponseDTO generarFactura(FacturaDTO facturaDTO) {
+        FacturaResponseDTO facturaResponseDTO = new FacturaResponseDTO();
         try {
             Autorizacion autorizacion = obtenerAutorizacion();
-            factura = solicitarCae(autorizacion, facturaDTO);
+            facturaResponseDTO = solicitarCae(autorizacion, facturaDTO);
         } catch (Exception e){
             e.printStackTrace();
         }
-        return factura;
+        return facturaResponseDTO;
     }
 
-    private Long obtenerUltimoComprobante(Autorizacion autorizacion, FacturaDTO facturaDTO) {
-        ServiceSoap serviceSoap = new com.sistemas.facturacion.service.afipFac.Service().getServiceSoap();
-        FEAuthRequest autenticacion = new FEAuthRequest();
-        autenticacion.setToken(autorizacion.getToken());
-        autenticacion.setSign(autorizacion.getSign());
-        autenticacion.setCuit(cuit);
-        FERecuperaLastCbteResponse feRecuperaLastCbteResponse = serviceSoap.feCompUltimoAutorizado(autenticacion,Integer.parseInt(facturaDTO.getPuntoVenta()),Integer.parseInt(facturaDTO.getTipoComprobante()));
-        return new Long(feRecuperaLastCbteResponse.getCbteNro());
-    }
-
-    private String solicitarCae(Autorizacion autorizacion, FacturaDTO facturaDTO) throws Exception{
+    public FacturaResponseDTO solicitarCae(Autorizacion autorizacion, FacturaDTO facturaDTO) throws Exception{
         if (autorizacion==null) throw new Exception();
-        ServiceSoap serviceSoap = new com.sistemas.facturacion.service.afipFac.Service().getServiceSoap();
-        FEAuthRequest autenticacion = new FEAuthRequest();
-        autenticacion.setToken(autorizacion.getToken());
-        autenticacion.setSign(autorizacion.getSign());
-        autenticacion.setCuit(cuit);
         FECAERequest request = new FECAERequest();
-        FECAECabRequest cabecera = new FECAECabRequest();
-        cabecera.setCantReg(1);
-        cabecera.setPtoVta(Integer.parseInt(facturaDTO.getPuntoVenta())); //Obtener de factura
-        cabecera.setCbteTipo(Integer.parseInt(facturaDTO.getTipoComprobante())); //Obtener de factura
-        request.setFeCabReq(cabecera);
-        ArrayOfFECAEDetRequest arrayOfFECAEDetRequest = new ArrayOfFECAEDetRequest();
+        request.setFeCabReq(crearCabecera(facturaDTO));
         FECAEDetRequest detalle = createDetalle(autorizacion, facturaDTO);
+        ArrayOfFECAEDetRequest arrayOfFECAEDetRequest = new ArrayOfFECAEDetRequest();
         arrayOfFECAEDetRequest.getFECAEDetRequest().add(detalle);
         request.setFeDetReq(arrayOfFECAEDetRequest);
-        FECAEResponse s = serviceSoap.fecaeSolicitar(autenticacion,request);
-        System.out.println(s);
-        boolean error = false;
-        try {
-            if (s.getErrors().getErr().get(0).getCode() == 600) error = true;
-        } catch (Exception e){}
-        if (error) throw new Exception();
-        return s.toString();
+        return generarFactura(crearAutorizacion(autorizacion),request);
+    }
+
+    private FEAuthRequest crearAutorizacion(Autorizacion autorizacion) {
+        FEAuthRequest autenticacion = new FEAuthRequest();
+        autenticacion.setToken(autorizacion.getToken());
+        autenticacion.setSign(autorizacion.getSign());
+        autenticacion.setCuit(cuit);
+        return autenticacion;
+    }
+
+    private FECAECabRequest crearCabecera(FacturaDTO facturaDTO) {
+        FECAECabRequest cabecera = new FECAECabRequest();
+        cabecera.setCantReg(1);
+        cabecera.setPtoVta(Integer.parseInt(facturaDTO.getPuntoVenta()));
+        cabecera.setCbteTipo(Integer.parseInt(facturaDTO.getTipoComprobante()));
+        return cabecera;
     }
 
     private FECAEDetRequest createDetalle(Autorizacion autorizacion, FacturaDTO facturaDTO) {
@@ -99,7 +90,7 @@ public class FacturaServiceImpl extends AfipWS implements FacturaService {
         Long numeroComprobante = obtenerUltimoComprobante(autorizacion, facturaDTO)+1;
         detalle.setCbteDesde(numeroComprobante);
         detalle.setCbteHasta(numeroComprobante);
-        detalle.setCbteFch(facturaDTO.getFecha());
+        detalle.setCbteFch(formatearFecha(facturaDTO.getFecha()));
         detalle.setImpTotal(Double.parseDouble(facturaDTO.getTotal()));
         detalle.setImpNeto(Double.parseDouble(facturaDTO.getTotal()));
         detalle.setImpTotConc(0);
@@ -111,6 +102,12 @@ public class FacturaServiceImpl extends AfipWS implements FacturaService {
         return detalle;
     }
 
+    private static String formatearFecha (String fecha){
+        String dia = fecha.substring(0,2);
+        String mes = fecha.substring(3,5);
+        String anio = fecha.substring(6);
+        return anio+mes+dia;
+    }
 
 
 }

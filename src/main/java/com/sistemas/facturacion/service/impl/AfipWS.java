@@ -4,6 +4,9 @@ import com.sistemas.facturacion.model.Autorizacion;
 import com.sistemas.facturacion.repository.AutorizacionRepository;
 import com.sistemas.facturacion.service.afip.LoginCMS;
 import com.sistemas.facturacion.service.afip.LoginCMSService;
+import com.sistemas.facturacion.service.afipFac.*;
+import com.sistemas.facturacion.service.dto.FacturaDTO;
+import com.sistemas.facturacion.service.dto.FacturaResponseDTO;
 import org.apache.axis.encoding.Base64;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.*;
@@ -41,6 +44,9 @@ public class AfipWS {
 
     @Value("${cert.path}")
     private String path;
+
+    @Value("${cuit}")
+    private Long cuit;
 
     public Autorizacion obtenerAutorizacion() throws Exception {
         KeyStore ks = KeyStore.getInstance("pkcs12");
@@ -102,6 +108,27 @@ public class AfipWS {
         LoginCMS loginCMS = new LoginCMSService().getLoginCms();
         LoginTicketResponse = loginCMS.loginCms(Base64.encode(asn1_cms));
         return (LoginTicketResponse);
+    }
+
+    public Long obtenerUltimoComprobante(Autorizacion autorizacion, FacturaDTO facturaDTO) {
+        ServiceSoap serviceSoap = new com.sistemas.facturacion.service.afipFac.Service().getServiceSoap();
+        FEAuthRequest autenticacion = new FEAuthRequest();
+        autenticacion.setToken(autorizacion.getToken());
+        autenticacion.setSign(autorizacion.getSign());
+        autenticacion.setCuit(cuit);
+        FERecuperaLastCbteResponse feRecuperaLastCbteResponse = serviceSoap.feCompUltimoAutorizado(autenticacion,Integer.parseInt(facturaDTO.getPuntoVenta()),Integer.parseInt(facturaDTO.getTipoComprobante()));
+        return new Long(feRecuperaLastCbteResponse.getCbteNro());
+    }
+
+    public FacturaResponseDTO generarFactura(FEAuthRequest autenticacion, FECAERequest request) throws Exception{
+        ServiceSoap serviceSoap = new com.sistemas.facturacion.service.afipFac.Service().getServiceSoap();
+        FECAEResponse response = serviceSoap.fecaeSolicitar(autenticacion,request);
+        FacturaResponseDTO facturaResponseDTO = new FacturaResponseDTO();
+        facturaResponseDTO.setCAE(response.getFeDetResp().getFECAEDetResponse().get(0).getCAE());
+        facturaResponseDTO.setNumeroComprobante(Long.toString(request.getFeDetReq().getFECAEDetRequest().get(0).getCbteDesde()));
+        facturaResponseDTO.setFechaVencimiento(response.getFeDetResp().getFECAEDetResponse().get(0).getCAEFchVto());
+        facturaResponseDTO.setError(facturaResponseDTO.getCAE()==null);
+        return facturaResponseDTO;
     }
 
 }
