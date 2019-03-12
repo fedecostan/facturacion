@@ -54,7 +54,9 @@ public class FacturaServiceImpl extends AfipWS implements FacturaService {
         ArrayOfFECAEDetRequest arrayOfFECAEDetRequest = new ArrayOfFECAEDetRequest();
         arrayOfFECAEDetRequest.getFECAEDetRequest().add(detalle);
         request.setFeDetReq(arrayOfFECAEDetRequest);
-        return generarFactura(crearAutorizacion(autorizacion),request);
+        FacturaResponseDTO cae = generarFactura(crearAutorizacion(autorizacion),request);
+        grabarfactura(cae,facturaDTO);
+        return cae;
     }
 
     private FEAuthRequest crearAutorizacion(Autorizacion autorizacion) {
@@ -109,5 +111,10 @@ public class FacturaServiceImpl extends AfipWS implements FacturaService {
         return anio+mes+dia;
     }
 
+    private void grabarfactura(FacturaResponseDTO cae, FacturaDTO facturaDTO) {
+        if (!cae.isError()){
+
+        }
+    }
 
 }

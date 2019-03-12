@@ -99,12 +99,6 @@ public class FacturaController {
         return articuloCService.obtenerPorId(id, fecha);
     }
 
-//    @RequestMapping(value = "/buscarComprobante", method = RequestMethod.GET)
-//    public @ResponseBody
-//    ComprobanteDTO buscarComprobante(@RequestParam("comp") String tipoComprobante){
-//        return comprobanteService.buscarUltimoComprobante(tipoComprobante);
-//    }
-
     @RequestMapping(value = "/generarFactura", method = RequestMethod.POST)
     public FacturaResponseDTO generarFactura(@RequestBody FacturaDTO facturaDTO){
         return facturaService.generarFactura(facturaDTO);

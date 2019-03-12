@@ -15,7 +15,7 @@ public class FacturaDTO {
     private String bonificacion;
     private String listaPrecio;
     private String total;
-//    private List<ArticuloFacturaDTO> articulos;
+    private List<ArticuloFacturaDTO> articulos;
 
     public String getFecha() {
         return fecha;
@@ -105,11 +105,11 @@ public class FacturaDTO {
         this.total = total;
     }
 
-//    public List<ArticuloFacturaDTO> getArticulos() {
-//        return articulos;
-//    }
-//
-//    public void setArticulos(List<ArticuloFacturaDTO> articulos) {
-//        this.articulos = articulos;
-//    }
+    public List<ArticuloFacturaDTO> getArticulos() {
+        return articulos;
+    }
+
+    public void setArticulos(List<ArticuloFacturaDTO> articulos) {
+        this.articulos = articulos;
+    }
 }
