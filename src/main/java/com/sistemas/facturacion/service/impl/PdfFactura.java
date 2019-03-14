@@ -27,8 +27,8 @@ public class PdfFactura {
         BaseFont bf = BaseFont.createFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
         for (int i=1; i<=reader.getNumberOfPages(); i++){
             PdfContentByte over = stamper.getOverContent(i);
-            addText("X",30,287,799, over, bf);
-            addText("COD. XX",10,280,785, over, bf);
+            addText("X",30,285,790, over, bf);
+            addText("COD. XX",10,275,780, over, bf);
 
             addText("Razón Social: XXXX XXXX",10,40,735, over, bf);
             addText("Domicilio Comercial: XXXX XXXX",10,40,715, over, bf);
@@ -52,18 +52,35 @@ public class PdfFactura {
             addText("Domicilio Comercial: XXXX XXXX",10,270,620, over, bf);
             addText("Condición de Venta: XXXX",10,40,605, over, bf);
 
-            addText("Código",10,18,576, over, bf);
-            addText("Producto / Servicio",10,70,576, over, bf);
-            addText("Cantidad",10,240,576, over, bf);
-            addText("Precio Unit.",10,297,576, over, bf);
-            addText("% Bonif.",10,361,576, over, bf);
-            addText("Subtotal",10,408,576, over, bf);
-            addText("Alicuota IVA",10,455,576, over, bf);
-            addText("Subtotal c/IVA",10,515,576, over, bf);
+            addText("Código",10,20,575, over, bf);
+            addText("Producto / Servicio",10,60,575, over, bf);
+            addText("Cantidad",10,230,575, over, bf);
+            addText("Precio Unit.",10,280,575, over, bf);
+            addText("% Bonif.",10,340,575, over, bf);
+            addText("Subtotal",10,385,575, over, bf);
+            addText("Alicuota IVA",10,435,575, over, bf);
+            addText("Subtotal c/IVA",10,510,575, over, bf);
 
+            int altura = 555;
             //DETALLE
+            for (int j=1; j<11; j++){
+                addText(""+j,10,28,altura, over, bf);
+                addText("Producto "+j,10,65,altura, over, bf);
+                addText("X",10,250,altura, over, bf);
+                addText("$ X",10,295,altura, over, bf);
+                addText("X",10,355,altura, over, bf);
+                addText("$ X",10,395,altura, over, bf);
+                addText("XX%",10,460,altura, over, bf);
+                addText("$ X",10,535,altura, over, bf);
+                altura = altura - 15;
+            }
 
-            addText("Subtotal c/IVA",10,515,576, over, bf);
+            addText("Subtotal: $ X",10,350,220, over, bf);
+            addText("Importe otros Tributos: $ X",10,350,205, over, bf);
+            addText("Importe Total: $ X",10,350,190, over, bf);
+
+            addText("CAE Nº XXXXXXXXXXXXXX",12,350,150, over, bf);
+            addText("Fecha de Vto. de CAE: DD/MM/AAAA",12,350,130, over, bf);
 
             BarraGenerator bg = new BarraGenerator();
             BufferedImage bufferedImage = bg.dameImagen("37381579906",12345678912345L,20,"15/03/2019","FCB");
