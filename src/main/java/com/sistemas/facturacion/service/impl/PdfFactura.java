@@ -1,11 +1,13 @@
 package com.sistemas.facturacion.service.impl;
 
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.pdf.BaseFont;
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.PdfStamper;
+import com.itextpdf.text.pdf.*;
+import com.itextpdf.text.Image;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -49,6 +51,28 @@ public class PdfFactura {
             addText("Condición frente al IVA: XXXX XXXX XXXX",10,40,620, over, bf);
             addText("Domicilio Comercial: XXXX XXXX",10,270,620, over, bf);
             addText("Condición de Venta: XXXX",10,40,605, over, bf);
+
+            addText("Código",10,18,576, over, bf);
+            addText("Producto / Servicio",10,70,576, over, bf);
+            addText("Cantidad",10,240,576, over, bf);
+            addText("Precio Unit.",10,297,576, over, bf);
+            addText("% Bonif.",10,361,576, over, bf);
+            addText("Subtotal",10,408,576, over, bf);
+            addText("Alicuota IVA",10,455,576, over, bf);
+            addText("Subtotal c/IVA",10,515,576, over, bf);
+
+            //DETALLE
+
+            addText("Subtotal c/IVA",10,515,576, over, bf);
+
+            BarraGenerator bg = new BarraGenerator();
+            BufferedImage bufferedImage = bg.dameImagen("37381579906",12345678912345L,20,"15/03/2019","FCB");
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(bufferedImage, "png", baos);
+            Image img = Image.getInstance(baos.toByteArray());
+            img.setAbsolutePosition(16,80);
+            img.scalePercent(52);
+            over.addImage(img);
         }
         stamper.close();
     }
