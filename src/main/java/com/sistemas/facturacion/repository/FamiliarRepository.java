@@ -14,7 +14,7 @@ public interface FamiliarRepository extends JpaRepository<Familiar, Integer> {
             " inner join f.titular t" +
             " inner join t.titularAList ta" +
             " where ta.delegacion = ?1" +
-            " and f.fechaBaja = '29991231")
+            " and f.fechaBaja = '29991231'")
     List<Familiar> findBySindicato(String sindicato);
 
     @Query("select f from Familiar f" +

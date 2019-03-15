@@ -116,7 +116,7 @@ public class AfipWS {
         autenticacion.setToken(autorizacion.getToken());
         autenticacion.setSign(autorizacion.getSign());
         autenticacion.setCuit(cuit);
-        FERecuperaLastCbteResponse feRecuperaLastCbteResponse = serviceSoap.feCompUltimoAutorizado(autenticacion,Integer.parseInt(facturaDTO.getPuntoVenta()),Integer.parseInt(facturaDTO.getTipoComprobante()));
+        FERecuperaLastCbteResponse feRecuperaLastCbteResponse = serviceSoap.feCompUltimoAutorizado(autenticacion,Integer.parseInt(facturaDTO.getPuntoVenta()),facturaDTO.getTipoComprobante());
         return new Long(feRecuperaLastCbteResponse.getCbteNro());
     }
 
