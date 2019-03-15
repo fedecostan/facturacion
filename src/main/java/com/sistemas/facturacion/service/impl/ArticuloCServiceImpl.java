@@ -4,6 +4,8 @@ import com.sistemas.facturacion.model.ArticuloC;
 import com.sistemas.facturacion.repository.ArticuloCRepository;
 import com.sistemas.facturacion.service.ArticuloCService;
 import com.sistemas.facturacion.service.dto.ArticuloDTO;
+import com.sistemas.facturacion.service.dto.ArticuloFacturaDTO;
+import com.sistemas.facturacion.service.dto.FacturaDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -55,5 +57,14 @@ public class ArticuloCServiceImpl implements ArticuloCService {
             articuloDTO.setName("NO EXISTE");
         }
         return articuloDTO;
+    }
+
+    @Override
+    public void descontarStock(FacturaDTO facturaDTO){
+        for (ArticuloFacturaDTO articulo : facturaDTO.getArticulos()){
+            ArticuloC articuloC = articuloCRepository.findByRubroArticulo(articulo.getCodigo());
+            articuloC.setStock(articuloC.getStock()-articulo.getCantidad());
+            articuloCRepository.save(articuloC);
+        }
     }
 }

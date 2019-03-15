@@ -22,4 +22,6 @@ public interface ArticuloCRepository extends JpaRepository<ArticuloC, Long> {
             " and p.fechaDesde <= ?2" +
             " and p.fechaHasta >= ?2")
     ArticuloC findByNumeroAndFecha(String id, String fecha);
+
+    ArticuloC findByRubroArticulo(String codigo);
 }

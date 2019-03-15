@@ -5,7 +5,7 @@ public class ArticuloFacturaDTO {
     private String fecha;
     private String codigo;
     private String descripcion;
-    private String cantidad;
+    private int cantidad;
     private String precio;
     private String total;
     private String id;
@@ -34,11 +34,11 @@ public class ArticuloFacturaDTO {
         this.descripcion = descripcion;
     }
 
-    public String getCantidad() {
+    public int getCantidad() {
         return cantidad;
     }
 
-    public void setCantidad(String cantidad) {
+    public void setCantidad(int cantidad) {
         this.cantidad = cantidad;
     }
 

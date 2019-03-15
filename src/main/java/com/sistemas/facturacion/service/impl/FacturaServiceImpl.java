@@ -1,13 +1,8 @@
 package com.sistemas.facturacion.service.impl;
 
-import com.sistemas.facturacion.model.Autorizacion;
-import com.sistemas.facturacion.model.Delegacion;
-import com.sistemas.facturacion.model.TipoDocumento;
-import com.sistemas.facturacion.model.Titular;
-import com.sistemas.facturacion.repository.DelegacionRepository;
-import com.sistemas.facturacion.repository.EmpresaRepository;
-import com.sistemas.facturacion.repository.TipoDocumentoRepository;
-import com.sistemas.facturacion.repository.TitularRepository;
+import com.sistemas.facturacion.model.*;
+import com.sistemas.facturacion.repository.*;
+import com.sistemas.facturacion.service.ArticuloCService;
 import com.sistemas.facturacion.service.FacturaService;
 import com.sistemas.facturacion.service.afipFac.*;
 import com.sistemas.facturacion.service.dto.FacturaDTO;
@@ -15,6 +10,8 @@ import com.sistemas.facturacion.service.dto.FacturaResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
 
 @Service
 public class FacturaServiceImpl extends AfipWS implements FacturaService {
@@ -30,6 +27,12 @@ public class FacturaServiceImpl extends AfipWS implements FacturaService {
 
     @Autowired
     private DelegacionRepository delegacionRepository;
+
+    @Autowired
+    private ArticuloCService articuloCService;
+
+    @Autowired
+    private MovimientoClienteRepository movimientoClienteRepository;
 
     @Value("${cuit}")
     private Long cuit;
@@ -93,8 +96,8 @@ public class FacturaServiceImpl extends AfipWS implements FacturaService {
         detalle.setCbteDesde(numeroComprobante);
         detalle.setCbteHasta(numeroComprobante);
         detalle.setCbteFch(formatearFecha(facturaDTO.getFecha()));
-        detalle.setImpTotal(Double.parseDouble(facturaDTO.getTotal()));
-        detalle.setImpNeto(Double.parseDouble(facturaDTO.getTotal()));
+        detalle.setImpTotal(facturaDTO.getTotal());
+        detalle.setImpNeto(facturaDTO.getTotal());
         detalle.setImpTotConc(0);
         detalle.setImpIVA(0);
         detalle.setImpOpEx(0);
@@ -104,7 +107,7 @@ public class FacturaServiceImpl extends AfipWS implements FacturaService {
         return detalle;
     }
 
-    private static String formatearFecha (String fecha){
+    private String formatearFecha (String fecha){
         String dia = fecha.substring(0,2);
         String mes = fecha.substring(3,5);
         String anio = fecha.substring(6);
@@ -113,7 +116,44 @@ public class FacturaServiceImpl extends AfipWS implements FacturaService {
 
     private void grabarfactura(FacturaResponseDTO cae, FacturaDTO facturaDTO) {
         if (!cae.isError()){
-
+            articuloCService.descontarStock(facturaDTO);
+            MovimientoCliente movimientoCliente = new MovimientoCliente();
+            movimientoCliente.setFecha(facturaDTO.getFecha());
+//            movimientoCliente.setCodigoComprobante(facturaDTO.getTipoComprobante());
+            movimientoCliente.setNumeroComprobante(cae.getNumeroComprobante());
+//            movimientoCliente.setTipoComprobante(facturaDTO.getTipoComprobante());
+            if (facturaDTO.getAfiliado()!=null) {
+                movimientoCliente.setCliente(facturaDTO.getAfiliado());
+            }
+            movimientoCliente.setSituacionIva(facturaDTO.getSituacionesIva());
+//            movimientoCliente.setFormaPago();
+//            movimientoCliente.setExpreso();
+            movimientoCliente.setListaPrecio(facturaDTO.getListaPrecio());
+            movimientoCliente.setBonificacion(facturaDTO.getBonificacion());
+//            movimientoCliente.setIva();
+//            movimientoCliente.setIvaNoInsc();
+            movimientoCliente.setTotalComprobante(facturaDTO.getTotal());
+            movimientoCliente.setLeyenda(facturaDTO.getLeyenda());
+            movimientoCliente.setUsuarioAlta("Factura Electronica");
+            movimientoCliente.setFechaAlta(new Date().toString());
+//            movimientoCliente.setCodigoComprobanteR();
+//            movimientoCliente.setNumeroComprobanteR();
+//            movimientoCliente.setNumeroComprobanteR();
+//            movimientoCliente.setMotivoCD();
+//            movimientoCliente.setQuienes();
+//            movimientoCliente.setOrganismo();
+//            movimientoCliente.setPeriodo();
+//            movimientoCliente.setNumeroCuota();
+//            movimientoCliente.setCuotas();
+//            movimientoCliente.setNumeroLiq();
+//            movimientoCliente.setNumeroEnv();
+//            movimientoCliente.setaDescuento();
+//            movimientoCliente.setOrdenServicio();
+            movimientoCliente.setDelegacion(facturaDTO.getSindicato());
+//            movimientoCliente.setCodigoRechazo();
+//            movimientoCliente.setCodigoFamilia();
+//            movimientoCliente.setOrdenFamilia();
+            movimientoClienteRepository.save(movimientoCliente);
         }
     }
 

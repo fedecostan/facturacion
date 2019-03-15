@@ -1,11 +1,13 @@
 package com.sistemas.facturacion.service.impl;
 
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.pdf.*;
 import com.itextpdf.text.Image;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfStamper;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
@@ -13,22 +15,14 @@ import java.io.IOException;
 
 public class PdfFactura {
 
-    public static void main(String[] args){
-        try {
-            imprimirFactura();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void imprimirFactura() throws IOException, DocumentException {
+    public void imprimirFactura() throws IOException, DocumentException {
         PdfReader reader = new PdfReader("/home/fcostantino/Workspace/PROYECTO/facturacion/src/main/resources/facturaTemplate.pdf");
         PdfStamper stamper = new PdfStamper(reader, new FileOutputStream("/home/fcostantino/Workspace/PROYECTO/facturaEjemplo.pdf"));
         BaseFont bf = BaseFont.createFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
         for (int i=1; i<=reader.getNumberOfPages(); i++){
             PdfContentByte over = stamper.getOverContent(i);
             addText("X",30,285,790, over, bf);
-            addText("COD. XX",10,275,780, over, bf);
+            addText("COD. XX",10,275,775, over, bf);
 
             addText("Razón Social: XXXX XXXX",10,40,735, over, bf);
             addText("Domicilio Comercial: XXXX XXXX",10,40,715, over, bf);

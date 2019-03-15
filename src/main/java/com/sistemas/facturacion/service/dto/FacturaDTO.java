@@ -12,9 +12,10 @@ public class FacturaDTO {
     private String afiliado;
     private String situacionesIva;
     private String condicionesVenta;
-    private String bonificacion;
+    private Double bonificacion;
     private String listaPrecio;
-    private String total;
+    private Double total;
+    private String leyenda;
     private List<ArticuloFacturaDTO> articulos;
 
     public String getFecha() {
@@ -81,11 +82,11 @@ public class FacturaDTO {
         this.condicionesVenta = condicionesVenta;
     }
 
-    public String getBonificacion() {
+    public Double getBonificacion() {
         return bonificacion;
     }
 
-    public void setBonificacion(String bonificacion) {
+    public void setBonificacion(Double bonificacion) {
         this.bonificacion = bonificacion;
     }
 
@@ -97,12 +98,20 @@ public class FacturaDTO {
         this.listaPrecio = listaPrecio;
     }
 
-    public String getTotal() {
+    public Double getTotal() {
         return total;
     }
 
-    public void setTotal(String total) {
+    public void setTotal(Double total) {
         this.total = total;
+    }
+
+    public String getLeyenda() {
+        return leyenda;
+    }
+
+    public void setLeyenda(String leyenda) {
+        this.leyenda = leyenda;
     }
 
     public List<ArticuloFacturaDTO> getArticulos() {
