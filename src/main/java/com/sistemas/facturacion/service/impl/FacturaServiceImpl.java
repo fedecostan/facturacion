@@ -5,6 +5,8 @@ import com.sistemas.facturacion.repository.*;
 import com.sistemas.facturacion.service.ArticuloCService;
 import com.sistemas.facturacion.service.FacturaService;
 import com.sistemas.facturacion.service.afipfac.*;
+import com.sistemas.facturacion.service.dto.ArticuloDTO;
+import com.sistemas.facturacion.service.dto.ArticuloFacturaDTO;
 import com.sistemas.facturacion.service.dto.FacturaDTO;
 import com.sistemas.facturacion.service.dto.FacturaResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +31,16 @@ public class FacturaServiceImpl extends AfipWS implements FacturaService {
     private DelegacionRepository delegacionRepository;
 
     @Autowired
+    private FamiliarRepository familiarRepository;
+
+    @Autowired
     private ArticuloCService articuloCService;
 
     @Autowired
     private MovimientoClienteRepository movimientoClienteRepository;
+
+    @Autowired
+    private MovimientoClienteDetalleRepository movimientoClienteDetalleRepository;
 
     @Autowired
     private TipoComprobanteRepository tipoComprobanteRepository;
@@ -122,9 +130,11 @@ public class FacturaServiceImpl extends AfipWS implements FacturaService {
 
     private void grabarfactura(FacturaResponseDTO cae, FacturaDTO facturaDTO) {
         if (!cae.isError()){
-//            articuloCService.descontarStock(facturaDTO);
+            articuloCService.descontarStock(facturaDTO);
             TipoComprobante tipoComprobante = tipoComprobanteRepository.findByCodigoAfip(facturaDTO.getTipoComprobante());
             SituacionesIVA situacionesIVA = situacionesIVARepository.findByCodigo(facturaDTO.getSituacionesIva());
+            Titular titular = titularRepository.findByNumeroRegistro(facturaDTO.getAfiliado());
+            Familiar familiar = familiarRepository.findByOrden(facturaDTO.getAfiliado());
             MovimientoCliente movimientoCliente = new MovimientoCliente();
             movimientoCliente.setFecha(formatearFecha(facturaDTO.getFecha()));
             movimientoCliente.setCodigoComprobante(tipoComprobante.getCodigo());
@@ -133,9 +143,18 @@ public class FacturaServiceImpl extends AfipWS implements FacturaService {
             if (facturaDTO.getAfiliado()!=null) {
                 movimientoCliente.setCliente(facturaDTO.getAfiliado());
                 movimientoCliente.setQuienes("A");
+                if (titular!=null){
+                    movimientoCliente.setCodigoFamilia("00");
+                    movimientoCliente.setOrdenFamilia(0);
+                } else {
+                    movimientoCliente.setCodigoFamilia(familiar.getCodigoFamilia());
+                    movimientoCliente.setOrdenFamilia(familiar.getOrden());
+                }
             } else {
                 movimientoCliente.setCliente(facturaDTO.getSindicato());
                 movimientoCliente.setQuienes("S");
+                movimientoCliente.setCodigoFamilia("00");
+                movimientoCliente.setOrdenFamilia(0);
             }
             movimientoCliente.setSituacionIva(facturaDTO.getSituacionesIva());
             movimientoCliente.setFormaPago(facturaDTO.getCondicionesVenta());
@@ -168,10 +187,64 @@ public class FacturaServiceImpl extends AfipWS implements FacturaService {
             movimientoCliente.setOrdenServicio(0);
             movimientoCliente.setDelegacion(facturaDTO.getSindicato());
             movimientoCliente.setCodigoRechazo(" ");
-            movimientoCliente.setCodigoFamilia("00");
-            movimientoCliente.setOrdenFamilia(0);
-
             movimientoClienteRepository.save(movimientoCliente);
+            Short ord = 0;
+            for (ArticuloFacturaDTO articuloFacturaDTO : facturaDTO.getArticulos()){
+                MovimientoClienteDetalle movimientoClienteDetalle = new MovimientoClienteDetalle();
+                movimientoClienteDetalle.setFecha(formatearFecha(facturaDTO.getFecha()));
+                movimientoClienteDetalle.setCodigoComprobante(tipoComprobante.getCodigo());
+                movimientoClienteDetalle.setNumeroComprobante(cae.getNumeroComprobante());
+                movimientoClienteDetalle.setTipoComprobante(tipoComprobante.getTipo());
+                movimientoClienteDetalle.setOrden(ord++);
+                movimientoClienteDetalle.setIndicativo("T");
+                movimientoClienteDetalle.setCodigo(articuloFacturaDTO.getCodigo());
+                movimientoClienteDetalle.setCantidad(new Double(articuloFacturaDTO.getCantidad()));
+                movimientoClienteDetalle.setUnidad(" ");
+                movimientoClienteDetalle.setUnixBulto(1);
+                movimientoClienteDetalle.setPrecioUnitario(articuloFacturaDTO.getPrecio());
+                movimientoClienteDetalle.setImporte(articuloFacturaDTO.getPrecio()*articuloFacturaDTO.getCantidad());
+                movimientoClienteDetalle.setImpBonificacion(articuloFacturaDTO.getPrecio()*facturaDTO.getBonificacion()/100);
+                movimientoClienteDetalle.setImpIva(0D);
+                movimientoClienteDetalle.setImpNoInsc(0D);
+                movimientoClienteDetalle.setImpInternos(0D);
+                movimientoClienteDetalle.setImpIntPorcentaje(0D);
+                movimientoClienteDetalle.setTotal(articuloFacturaDTO.getPrecio()-articuloFacturaDTO.getPrecio()*facturaDTO.getBonificacion()/100);
+                movimientoClienteDetalle.setBaseArticulo(0D);
+                movimientoClienteDetalle.setAperturaArticulo(0D);
+                movimientoClienteDetalle.setAnulado("N");
+                movimientoClienteDetalle.setCodigoComprobanteR(" ");
+                movimientoClienteDetalle.setNumeroComprobanteR(" ");
+                movimientoClienteDetalle.setTipoComprobanteR(" ");
+                movimientoClienteDetalle.setLeyenda(articuloFacturaDTO.getDescripcion());
+                if (facturaDTO.getAfiliado()!=null) {
+                    movimientoClienteDetalle.setQuienes("A");
+                    movimientoClienteDetalle.setAfiliado(facturaDTO.getAfiliado());
+                    if (titular!=null){
+                        movimientoClienteDetalle.setCodigoFamilia("00");
+                        movimientoClienteDetalle.setOrdenFamilia(0);
+                    } else {
+                        movimientoClienteDetalle.setCodigoFamilia(familiar.getCodigoFamilia());
+                        movimientoClienteDetalle.setOrdenFamilia(familiar.getOrden());
+                    }
+                } else {
+                    movimientoClienteDetalle.setQuienes("S");
+                    movimientoClienteDetalle.setAfiliado(facturaDTO.getSindicato());
+                    movimientoClienteDetalle.setCodigoFamilia("00");
+                    movimientoClienteDetalle.setOrdenFamilia(0);
+                }
+                movimientoClienteDetalle.setOrganismo(facturaDTO.getSindicato());
+                movimientoClienteDetalle.setPeriodo(formatearFecha(facturaDTO.getFecha()));
+                movimientoClienteDetalle.setNumeroCuota(0);
+                movimientoClienteDetalle.setCuotas(0);
+                movimientoClienteDetalle.setNumeroLiq(" ");
+                movimientoClienteDetalle.setNumeroEnv(" ");
+                movimientoClienteDetalle.setaDescuento("S");
+                movimientoClienteDetalle.setOrdenServicio(0);
+                movimientoClienteDetalle.setDelegacion(facturaDTO.getSindicato());
+                movimientoClienteDetalle.setBonoDesdeHasta("00000000000000000000");
+                movimientoClienteDetalle.setCosto(0D);
+                movimientoClienteDetalleRepository.save(movimientoClienteDetalle);
+            }
         }
     }
 

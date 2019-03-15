@@ -14,7 +14,7 @@ public class Familiar {
     private int orden;
 
     @Column(name = "codflia")
-    private String codigloFamilia;
+    private String codigoFamilia;
 
     @Column(name = "cuil")
     private String cuil;
@@ -154,12 +154,12 @@ public class Familiar {
         this.orden = orden;
     }
 
-    public String getCodigloFamilia() {
-        return codigloFamilia;
+    public String getCodigoFamilia() {
+        return codigoFamilia;
     }
 
-    public void setCodigloFamilia(String codigloFamilia) {
-        this.codigloFamilia = codigloFamilia;
+    public void setCodigoFamilia(String codigoFamilia) {
+        this.codigoFamilia = codigoFamilia;
     }
 
     public String getCuil() {
