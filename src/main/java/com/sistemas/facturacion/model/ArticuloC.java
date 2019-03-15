@@ -27,7 +27,7 @@ public class ArticuloC {
     private String fecha;
 
     @Column(name = "stock")
-    private int Stock;
+    private int stock;
 
     @Column(name = "puntorepo")
     private int puntoRepo;
@@ -115,11 +115,11 @@ public class ArticuloC {
     }
 
     public int getStock() {
-        return Stock;
+        return stock;
     }
 
     public void setStock(int stock) {
-        Stock = stock;
+        this.stock = stock;
     }
 
     public int getPuntoRepo() {

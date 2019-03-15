@@ -35,7 +35,7 @@ public class FacturaController {
     @Autowired
     private FacturaService facturaService;
 
-    @RequestMapping(value = "/cargarInformacion", method = RequestMethod.GET)
+    @GetMapping(value = "/cargarInformacion")
     public @ResponseBody
     InfoPantallaDTO cargarInformacion(){
         InfoPantallaDTO infoPantallaDTO = new InfoPantallaDTO();
@@ -45,61 +45,61 @@ public class FacturaController {
         return infoPantallaDTO;
     }
 
-    @RequestMapping(value = "/cargarLeyendaComprobante", method = RequestMethod.GET)
+    @GetMapping(value = "/cargarLeyendaComprobante")
     public @ResponseBody
     TipoComprobanteDTO cargarLeyendaComprobante(@RequestParam("codigo") Integer codigo){
         return tipoComprobanteService.obtenerleyenda(codigo);
     }
 
-    @RequestMapping(value = "/cargarSindicatos", method = RequestMethod.GET)
+    @GetMapping(value = "/cargarSindicatos")
     public @ResponseBody
     List<DelegacionDTO> cargarSindicatos(){
         return delegacionService.obtenerTodos();
     }
 
-    @RequestMapping(value = "/buscarSindicatoPorCodigo", method = RequestMethod.GET)
+    @GetMapping(value = "/buscarSindicatoPorCodigo")
     public @ResponseBody
     DelegacionDTO buscarSindicatoPorCodigo(@RequestParam("codigo") String codigo){
         return delegacionService.buscarDelegacionPorCodigo(codigo);
     }
 
-    @RequestMapping(value = "/cargarAfiliados", method = RequestMethod.GET)
+    @GetMapping(value = "/cargarAfiliados")
     public @ResponseBody
     List<TitularDTO> cargarAfiliados(){
         return titularService.obtenerTodos();
     }
 
-    @RequestMapping(value = "/cargarAfiliadosPorSindicato", method = RequestMethod.GET)
+    @GetMapping(value = "/cargarAfiliadosPorSindicato")
     public @ResponseBody
     List<TitularDTO> cargarAfiliadosPorSindicato(@RequestParam("sindicato") String sindicato){
         return titularService.obtenerPorSindicato(sindicato);
     }
 
-    @RequestMapping(value = "/buscarAfiliadoPorId", method = RequestMethod.GET)
+    @GetMapping(value = "/buscarAfiliadoPorId")
     public @ResponseBody
     TitularDTO buscarAfiliadoPorId(@RequestParam("id") Long id){
         return titularService.obtenerPorId(id);
     }
 
-    @RequestMapping(value = "/buscarAfiliadoPorIdYSindicato", method = RequestMethod.GET)
+    @GetMapping(value = "/buscarAfiliadoPorIdYSindicato")
     public @ResponseBody
     TitularDTO buscarAfiliadoPorIdYSindicato(@RequestParam("id") Long id, @RequestParam("sindicato") Long sindicato){
         return titularService.obtenerPorIdYSindicato(id,sindicato);
     }
 
-    @RequestMapping(value = "/cargarProductos", method = RequestMethod.GET)
+    @GetMapping(value = "/cargarProductos")
     public @ResponseBody
     List<ArticuloDTO> cargarProductos(@RequestParam("fecha") String fecha){
         return articuloCService.obtenerTodos(fecha);
     }
 
-    @RequestMapping(value = "/cargarProductosPorId", method = RequestMethod.GET)
+    @GetMapping(value = "/cargarProductosPorId")
     public @ResponseBody
     ArticuloDTO cargarProductosPorId(@RequestParam("id") Long id, @RequestParam("fecha") String fecha){
         return articuloCService.obtenerPorId(id, fecha);
     }
 
-    @RequestMapping(value = "/generarFactura", method = RequestMethod.POST)
+    @PostMapping(value = "/generarFactura")
     public FacturaResponseDTO generarFactura(@RequestBody FacturaDTO facturaDTO){
         return facturaService.generarFactura(facturaDTO);
     }

@@ -1,13 +1,9 @@
 package com.sistemas.facturacion.service.impl;
 
 import com.sistemas.facturacion.model.SituacionesIVA;
-import com.sistemas.facturacion.model.TipoComprobante;
 import com.sistemas.facturacion.repository.SituacionesIVARepository;
-import com.sistemas.facturacion.repository.TipoComprobanteRepository;
 import com.sistemas.facturacion.service.SituacionesIVAService;
-import com.sistemas.facturacion.service.TipoComprobanteService;
 import com.sistemas.facturacion.service.dto.SituacionesIVADTO;
-import com.sistemas.facturacion.service.dto.TipoComprobanteDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

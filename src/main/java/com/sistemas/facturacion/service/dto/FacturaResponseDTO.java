@@ -3,7 +3,7 @@ package com.sistemas.facturacion.service.dto;
 public class FacturaResponseDTO {
 
     private String numeroComprobante;
-    private String CAE;
+    private String cae;
     private String fechaVencimiento;
     private boolean error;
 
@@ -16,11 +16,11 @@ public class FacturaResponseDTO {
     }
 
     public String getCAE() {
-        return CAE;
+        return cae;
     }
 
-    public void setCAE(String CAE) {
-        this.CAE = CAE;
+    public void setCAE(String cae) {
+        this.cae = cae;
     }
 
     public String getFechaVencimiento() {

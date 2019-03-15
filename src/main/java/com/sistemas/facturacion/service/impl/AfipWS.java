@@ -4,7 +4,7 @@ import com.sistemas.facturacion.model.Autorizacion;
 import com.sistemas.facturacion.repository.AutorizacionRepository;
 import com.sistemas.facturacion.service.afip.LoginCMS;
 import com.sistemas.facturacion.service.afip.LoginCMSService;
-import com.sistemas.facturacion.service.afipFac.*;
+import com.sistemas.facturacion.service.afipfac.*;
 import com.sistemas.facturacion.service.dto.FacturaDTO;
 import com.sistemas.facturacion.service.dto.FacturaResponseDTO;
 import org.apache.axis.encoding.Base64;
@@ -111,7 +111,7 @@ public class AfipWS {
     }
 
     public Long obtenerUltimoComprobante(Autorizacion autorizacion, FacturaDTO facturaDTO) {
-        ServiceSoap serviceSoap = new com.sistemas.facturacion.service.afipFac.Service().getServiceSoap();
+        ServiceSoap serviceSoap = new com.sistemas.facturacion.service.afipfac.Service().getServiceSoap();
         FEAuthRequest autenticacion = new FEAuthRequest();
         autenticacion.setToken(autorizacion.getToken());
         autenticacion.setSign(autorizacion.getSign());
@@ -121,7 +121,7 @@ public class AfipWS {
     }
 
     public FacturaResponseDTO generarFactura(FEAuthRequest autenticacion, FECAERequest request) throws Exception{
-        ServiceSoap serviceSoap = new com.sistemas.facturacion.service.afipFac.Service().getServiceSoap();
+        ServiceSoap serviceSoap = new com.sistemas.facturacion.service.afipfac.Service().getServiceSoap();
         FECAEResponse response = serviceSoap.fecaeSolicitar(autenticacion,request);
         FacturaResponseDTO facturaResponseDTO = new FacturaResponseDTO();
         facturaResponseDTO.setCAE(response.getFeDetResp().getFECAEDetResponse().get(0).getCAE());

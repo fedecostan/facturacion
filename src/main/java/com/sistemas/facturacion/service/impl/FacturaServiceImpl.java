@@ -4,7 +4,7 @@ import com.sistemas.facturacion.model.*;
 import com.sistemas.facturacion.repository.*;
 import com.sistemas.facturacion.service.ArticuloCService;
 import com.sistemas.facturacion.service.FacturaService;
-import com.sistemas.facturacion.service.afipFac.*;
+import com.sistemas.facturacion.service.afipfac.*;
 import com.sistemas.facturacion.service.dto.FacturaDTO;
 import com.sistemas.facturacion.service.dto.FacturaResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
