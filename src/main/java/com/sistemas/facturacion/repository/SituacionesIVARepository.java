@@ -12,4 +12,6 @@ public interface SituacionesIVARepository extends JpaRepository<SituacionesIVA, 
 
     @Query(value = "SELECT * FROM tsitiva", nativeQuery = true)
     List<SituacionesIVA> findTodos();
+
+    SituacionesIVA findByCodigo(String situacionesIva);
 }

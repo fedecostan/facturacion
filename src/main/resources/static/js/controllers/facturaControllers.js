@@ -352,7 +352,9 @@
                     condicionesVenta:$scope.factura.condicionVenta,
                     bonificacion:$scope.factura.bonificacion,
                     listaPrecio:$scope.factura.listaPrecio,
-                    total:$scope.totales.total
+                    total:$scope.totales.total,
+                    leyenda:$scope.leyenda,
+                    articulos:$scope.listaArticulos
                 };
                 $http({method: 'POST',url: facturaUrl + 'generarFactura', data: data}).then(
                     function successCallback(response) {
@@ -398,20 +400,6 @@
                             $scope.leyenda = response.data.name;
                         }, function errorCallback(response) {
                     });
-//                    $http({method: 'GET',url: facturaUrl + 'buscarComprobante?comp=' + $scope.factura.tipoComprobante}).then(
-//                        function successCallback(response) {
-//                            ocultarCargando();
-//                            $scope.factura.nroComprobante = ('0000000' + Number(response.data.numero.substring(4,12))+1).slice(-8);
-//                                if (response.data.numero != "1"){
-//                                var anio = response.data.fecha.substring(0,4);
-//                                var mes = response.data.fecha.substring(4,6);
-//                                var dia = response.data.fecha.substring(6,8);
-//                                $scope.fechaMinimaFactura = anio+'-'+mes+'-'+dia;
-//                            } else {
-//                                $scope.fechaMinimaFactura = '1900-01-01';
-//                            }
-//                        }, function errorCallback(response) {
-//                    });
                 }
             }
         })

@@ -5,9 +5,8 @@ import java.util.List;
 public class FacturaDTO {
 
     private String fecha;
-    private String tipoComprobante;
+    private Integer tipoComprobante;
     private String puntoVenta;
-    private String numeroComprobante;
     private String sindicato;
     private String afiliado;
     private String situacionesIva;
@@ -26,11 +25,11 @@ public class FacturaDTO {
         this.fecha = fecha;
     }
 
-    public String getTipoComprobante() {
+    public Integer getTipoComprobante() {
         return tipoComprobante;
     }
 
-    public void setTipoComprobante(String tipoComprobante) {
+    public void setTipoComprobante(Integer tipoComprobante) {
         this.tipoComprobante = tipoComprobante;
     }
 
@@ -40,14 +39,6 @@ public class FacturaDTO {
 
     public void setPuntoVenta(String puntoVenta) {
         this.puntoVenta = puntoVenta;
-    }
-
-    public String getNumeroComprobante() {
-        return numeroComprobante;
-    }
-
-    public void setNumeroComprobante(String numeroComprobante) {
-        this.numeroComprobante = numeroComprobante;
     }
 
     public String getSindicato() {

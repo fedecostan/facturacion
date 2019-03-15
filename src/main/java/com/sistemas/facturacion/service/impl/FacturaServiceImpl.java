@@ -34,6 +34,12 @@ public class FacturaServiceImpl extends AfipWS implements FacturaService {
     @Autowired
     private MovimientoClienteRepository movimientoClienteRepository;
 
+    @Autowired
+    private TipoComprobanteRepository tipoComprobanteRepository;
+
+    @Autowired
+    private SituacionesIVARepository situacionesIVARepository;
+
     @Value("${cuit}")
     private Long cuit;
 
@@ -74,7 +80,7 @@ public class FacturaServiceImpl extends AfipWS implements FacturaService {
         FECAECabRequest cabecera = new FECAECabRequest();
         cabecera.setCantReg(1);
         cabecera.setPtoVta(Integer.parseInt(facturaDTO.getPuntoVenta()));
-        cabecera.setCbteTipo(Integer.parseInt(facturaDTO.getTipoComprobante()));
+        cabecera.setCbteTipo(facturaDTO.getTipoComprobante());
         return cabecera;
     }
 
@@ -116,43 +122,55 @@ public class FacturaServiceImpl extends AfipWS implements FacturaService {
 
     private void grabarfactura(FacturaResponseDTO cae, FacturaDTO facturaDTO) {
         if (!cae.isError()){
-            articuloCService.descontarStock(facturaDTO);
+//            articuloCService.descontarStock(facturaDTO);
+            TipoComprobante tipoComprobante = tipoComprobanteRepository.findByCodigoAfip(facturaDTO.getTipoComprobante());
+            SituacionesIVA situacionesIVA = situacionesIVARepository.findByCodigo(facturaDTO.getSituacionesIva());
             MovimientoCliente movimientoCliente = new MovimientoCliente();
-            movimientoCliente.setFecha(facturaDTO.getFecha());
-//            movimientoCliente.setCodigoComprobante(facturaDTO.getTipoComprobante());
+            movimientoCliente.setFecha(formatearFecha(facturaDTO.getFecha()));
+            movimientoCliente.setCodigoComprobante(tipoComprobante.getCodigo());
             movimientoCliente.setNumeroComprobante(cae.getNumeroComprobante());
-//            movimientoCliente.setTipoComprobante(facturaDTO.getTipoComprobante());
+            movimientoCliente.setTipoComprobante(tipoComprobante.getTipo());
             if (facturaDTO.getAfiliado()!=null) {
                 movimientoCliente.setCliente(facturaDTO.getAfiliado());
+                movimientoCliente.setQuienes("A");
+            } else {
+                movimientoCliente.setCliente(facturaDTO.getSindicato());
+                movimientoCliente.setQuienes("S");
             }
             movimientoCliente.setSituacionIva(facturaDTO.getSituacionesIva());
-//            movimientoCliente.setFormaPago();
-//            movimientoCliente.setExpreso();
+            movimientoCliente.setFormaPago(facturaDTO.getCondicionesVenta());
+            movimientoCliente.setExpreso(" ");
             movimientoCliente.setListaPrecio(facturaDTO.getListaPrecio());
             movimientoCliente.setBonificacion(facturaDTO.getBonificacion());
-//            movimientoCliente.setIva();
-//            movimientoCliente.setIvaNoInsc();
-            movimientoCliente.setTotalComprobante(facturaDTO.getTotal());
+            movimientoCliente.setIva(0D);
+            movimientoCliente.setIvaNoInsc(0D);
+            if (tipoComprobante.getCodigo().equals("NCA") || tipoComprobante.getCodigo().equals("NCB") || tipoComprobante.getCodigo().equals("NCC")){
+                movimientoCliente.setTotalComprobante(facturaDTO.getTotal()*-1);
+            } else {
+                movimientoCliente.setTotalComprobante(facturaDTO.getTotal());
+            }
+            movimientoCliente.setImpuestoPagado(0D);
+            movimientoCliente.setAnulado("N");
             movimientoCliente.setLeyenda(facturaDTO.getLeyenda());
             movimientoCliente.setUsuarioAlta("Factura Electronica");
             movimientoCliente.setFechaAlta(new Date().toString());
-//            movimientoCliente.setCodigoComprobanteR();
-//            movimientoCliente.setNumeroComprobanteR();
-//            movimientoCliente.setNumeroComprobanteR();
-//            movimientoCliente.setMotivoCD();
-//            movimientoCliente.setQuienes();
-//            movimientoCliente.setOrganismo();
-//            movimientoCliente.setPeriodo();
-//            movimientoCliente.setNumeroCuota();
-//            movimientoCliente.setCuotas();
-//            movimientoCliente.setNumeroLiq();
-//            movimientoCliente.setNumeroEnv();
-//            movimientoCliente.setaDescuento();
-//            movimientoCliente.setOrdenServicio();
+            movimientoCliente.setCodigoComprobanteR(" ");
+            movimientoCliente.setNumeroComprobanteR(" ");
+            movimientoCliente.setNumeroComprobanteR(" ");
+            movimientoCliente.setMotivoCD(" ");
+            movimientoCliente.setOrganismo(facturaDTO.getSindicato());
+            movimientoCliente.setPeriodo(formatearFecha(facturaDTO.getFecha()).substring(0,6));
+            movimientoCliente.setNumeroCuota(0);
+            movimientoCliente.setCuotas(0);
+            movimientoCliente.setNumeroLiq(" ");
+            movimientoCliente.setNumeroEnv(" ");
+            movimientoCliente.setaDescuento("S");
+            movimientoCliente.setOrdenServicio(0);
             movimientoCliente.setDelegacion(facturaDTO.getSindicato());
-//            movimientoCliente.setCodigoRechazo();
-//            movimientoCliente.setCodigoFamilia();
-//            movimientoCliente.setOrdenFamilia();
+            movimientoCliente.setCodigoRechazo(" ");
+            movimientoCliente.setCodigoFamilia("00");
+            movimientoCliente.setOrdenFamilia(0);
+
             movimientoClienteRepository.save(movimientoCliente);
         }
     }
