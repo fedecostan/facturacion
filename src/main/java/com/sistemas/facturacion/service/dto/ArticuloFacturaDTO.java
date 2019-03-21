@@ -7,7 +7,7 @@ public class ArticuloFacturaDTO {
     private String descripcion;
     private int cantidad;
     private Double precio;
-    private String total;
+    private Double total;
     private String id;
 
     public String getFecha() {
@@ -50,11 +50,11 @@ public class ArticuloFacturaDTO {
         this.precio = precio;
     }
 
-    public String getTotal() {
+    public Double getTotal() {
         return total;
     }
 
-    public void setTotal(String total) {
+    public void setTotal(Double total) {
         this.total = total;
     }
 

@@ -2,6 +2,7 @@ package com.sistemas.facturacion.controller;
 
 import com.sistemas.facturacion.service.*;
 import com.sistemas.facturacion.service.dto.*;
+import com.sistemas.facturacion.service.impl.PdfFactura;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -102,6 +103,12 @@ public class FacturaController {
     @PostMapping(value = "/generarFactura")
     public FacturaResponseDTO generarFactura(@RequestBody FacturaDTO facturaDTO){
         return facturaService.generarFactura(facturaDTO);
+    }
+
+    @PostMapping(value = "/imprimirFactura")
+    public void imprimirFactura(@RequestBody DatosFacturaDTO datosFacturaDTO, @RequestParam("mail") String mail){
+        PdfFactura pdfFactura = new PdfFactura();
+        pdfFactura.imprimirFactura(datosFacturaDTO,mail);
     }
 
 }
