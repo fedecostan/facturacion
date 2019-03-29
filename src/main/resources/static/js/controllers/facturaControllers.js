@@ -23,6 +23,7 @@
             $scope.listaPreciosDeshabilitada = false;
             $scope.afiliadoDeshabilitado = true;
             $scope.agregarArticuloDeshabilitado = true;
+            $scope.habilitarAfiliado = false;
 
             var modalSindicato = document.getElementById('modalSindicato');
             var modalAfiliado = document.getElementById('modalAfiliado');
