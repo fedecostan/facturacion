@@ -9,10 +9,14 @@ import javax.persistence.*;
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class MovimientoClienteDetalle {
 
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+
     @Column(name = "fecha")
     private String fecha;
 
-    @Id
     @Column(name = "codicomprobante")
     private String codigoComprobante;
 

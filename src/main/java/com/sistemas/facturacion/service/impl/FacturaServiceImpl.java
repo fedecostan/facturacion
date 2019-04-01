@@ -7,12 +7,14 @@ import com.sistemas.facturacion.service.FacturaService;
 //import com.sistemas.facturacion.service.afipfac.*;
 import com.sistemas.facturacion.service.afipWS.fev1.dif.afip.gov.ar.*;
 import com.sistemas.facturacion.service.dto.ArticuloFacturaDTO;
+import com.sistemas.facturacion.service.dto.DatosFacturaDTO;
 import com.sistemas.facturacion.service.dto.FacturaDTO;
 import com.sistemas.facturacion.service.dto.FacturaResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Service
@@ -48,6 +50,9 @@ public class FacturaServiceImpl extends AfipWS implements FacturaService {
     @Autowired
     private SituacionesIVARepository situacionesIVARepository;
 
+    @Autowired
+    private PdfFactura pdfFactura;
+
     @Value("${cuit}")
     private Long cuit;
 
@@ -73,7 +78,15 @@ public class FacturaServiceImpl extends AfipWS implements FacturaService {
         request.setFeDetReq(arrayOfFECAEDetRequest);
         FacturaResponseDTO cae = generarFactura(crearAutorizacion(autorizacion),request);
         grabarfactura(cae,facturaDTO);
+        imprimirFactura(cae,facturaDTO);
         return cae;
+    }
+
+    private void imprimirFactura(FacturaResponseDTO cae, FacturaDTO facturaDTO) {
+        DatosFacturaDTO datosFacturaDTO = new DatosFacturaDTO();
+        datosFacturaDTO.setFacturaDTO(facturaDTO);
+        datosFacturaDTO.setFacturaResponseDTO(cae);
+        pdfFactura.imprimirFactura(datosFacturaDTO);
     }
 
     private FEAuthRequest crearAutorizacion(Autorizacion autorizacion) {
@@ -171,8 +184,9 @@ public class FacturaServiceImpl extends AfipWS implements FacturaService {
             movimientoCliente.setImpuestoPagado(0D);
             movimientoCliente.setAnulado("N");
             movimientoCliente.setLeyenda(facturaDTO.getLeyenda());
-            movimientoCliente.setUsuarioAlta("Factura Electronica");
-            movimientoCliente.setFechaAlta(new Date().toString());
+            movimientoCliente.setUsuarioAlta("FE");
+            SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+            movimientoCliente.setFechaAlta(format.format(new Date()));
             movimientoCliente.setCodigoComprobanteR(" ");
             movimientoCliente.setNumeroComprobanteR(" ");
             movimientoCliente.setNumeroComprobanteR(" ");

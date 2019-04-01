@@ -16,6 +16,7 @@ public class FacturaDTO {
     private Double total;
     private String leyenda;
     private List<ArticuloFacturaDTO> articulos;
+    private String mail;
 
     public String getFecha() {
         return fecha;
@@ -111,5 +112,13 @@ public class FacturaDTO {
 
     public void setArticulos(List<ArticuloFacturaDTO> articulos) {
         this.articulos = articulos;
+    }
+
+    public String getMail() {
+        return mail;
+    }
+
+    public void setMail(String mail) {
+        this.mail = mail;
     }
 }

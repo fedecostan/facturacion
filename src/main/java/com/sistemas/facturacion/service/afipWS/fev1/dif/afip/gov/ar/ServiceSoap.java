@@ -24,9 +24,7 @@ public interface ServiceSoap {
 
 
     /**
-     * 
-     * Solicitud de Código de Autorización Electrónico (CAE)
-     * 
+     * Solicitud de C�digo de Autorizaci�n Electr�nico (CAE)
      * 
      * @param feCAEReq
      * @param auth
@@ -44,9 +42,7 @@ public interface ServiceSoap {
         FECAERequest feCAEReq);
 
     /**
-     * 
-     * Retorna la cantidad maxima de registros que puede tener una invocacion al metodo FECAESolicitar / FECAEARegInformativo
-     * 
+     * Retorna la cantidad maxima de registros que puede tener una invocacion al metodo FECAESolicitar / FECAEARegInformativo 
      * 
      * @param auth
      * @return
@@ -73,9 +69,7 @@ public interface ServiceSoap {
     public DummyResponse feDummy();
 
     /**
-     * 
-     * Retorna el ultimo comprobante autorizado para el tipo de comprobante / cuit / punto de venta ingresado / Tipo de Emisión
-     * 
+     * Retorna el ultimo comprobante autorizado para el tipo de comprobante / cuit / punto de venta ingresado / Tipo de Emisi�n
      * 
      * @param cbteTipo
      * @param auth
@@ -96,7 +90,7 @@ public interface ServiceSoap {
         int cbteTipo);
 
     /**
-     * Consulta Comprobante emitido y su código.
+     * Consulta Comprobante emitido y su c�digo.
      * 
      * @param auth
      * @param feCompConsReq
@@ -114,7 +108,7 @@ public interface ServiceSoap {
         FECompConsultaReq feCompConsReq);
 
     /**
-     * Rendición de comprobantes asociados a un CAEA.
+     * Rendici�n de comprobantes asociados a un CAEA.
      * 
      * @param auth
      * @param feCAEARegInfReq
@@ -132,9 +126,7 @@ public interface ServiceSoap {
         FECAEARequest feCAEARegInfReq);
 
     /**
-     * 
-     * Solicitud de Código de Autorización Electrónico Anticipado (CAEA)
-     * 
+     * Solicitud de C�digo de Autorizaci�n Electr�nico Anticipado (CAEA)
      * 
      * @param auth
      * @param periodo
@@ -218,9 +210,7 @@ public interface ServiceSoap {
         short orden);
 
     /**
-     * 
-     * Recupera la cotizacion de la moneda consultada y su fecha
-     * 
+     * Recupera la cotizacion de la moneda consultada y su  fecha 
      * 
      * @param monId
      * @param auth
@@ -238,9 +228,7 @@ public interface ServiceSoap {
         String monId);
 
     /**
-     * 
-     * Recupera el listado de los diferente tributos que pueden ser utilizados en el servicio de autorizacion
-     * 
+     * Recupera el listado de los diferente tributos que pueden ser utilizados  en el servicio de autorizacion
      * 
      * @param auth
      * @return
@@ -255,9 +243,7 @@ public interface ServiceSoap {
         FEAuthRequest auth);
 
     /**
-     * 
-     * Recupera el listado de monedas utilizables en servicio de autorización
-     * 
+     * Recupera el listado de monedas utilizables en servicio de autorizaci�n
      * 
      * @param auth
      * @return
@@ -272,9 +258,7 @@ public interface ServiceSoap {
         FEAuthRequest auth);
 
     /**
-     * 
-     * Recupera el listado de Tipos de Iva utilizables en servicio de autorización.
-     * 
+     * Recupera el listado  de Tipos de Iva utilizables en servicio de autorizaci�n.
      * 
      * @param auth
      * @return
@@ -289,9 +273,7 @@ public interface ServiceSoap {
         FEAuthRequest auth);
 
     /**
-     * 
      * Recupera el listado de identificadores para los campos Opcionales
-     * 
      * 
      * @param auth
      * @return
@@ -306,9 +288,7 @@ public interface ServiceSoap {
         FEAuthRequest auth);
 
     /**
-     * 
-     * Recupera el listado de identificadores para el campo Concepto.
-     * 
+     * Recupera el listado  de identificadores para el campo Concepto.
      * 
      * @param auth
      * @return
@@ -323,9 +303,7 @@ public interface ServiceSoap {
         FEAuthRequest auth);
 
     /**
-     * 
      * Recupera el listado de puntos de venta registrados y su estado
-     * 
      * 
      * @param auth
      * @return
@@ -340,9 +318,7 @@ public interface ServiceSoap {
         FEAuthRequest auth);
 
     /**
-     * 
-     * Recupera el listado de Tipos de Comprobantes utilizables en servicio de autorización.
-     * 
+     * Recupera el listado  de Tipos de Comprobantes utilizables en servicio de autorizaci�n.
      * 
      * @param auth
      * @return
@@ -357,9 +333,7 @@ public interface ServiceSoap {
         FEAuthRequest auth);
 
     /**
-     * 
-     * Recupera el listado de Tipos de Documentos utilizables en servicio de autorización.
-     * 
+     * Recupera el listado  de Tipos de Documentos utilizables en servicio de autorizaci�n.
      * 
      * @param auth
      * @return
@@ -374,9 +348,7 @@ public interface ServiceSoap {
         FEAuthRequest auth);
 
     /**
-     * 
-     * Recupera el listado de los diferente paises que pueden ser utilizados en el servicio de autorizacion
-     * 
+     * Recupera el listado de los diferente paises que pueden ser utilizados  en el servicio de autorizacion
      * 
      * @param auth
      * @return

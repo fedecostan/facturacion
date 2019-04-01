@@ -105,10 +105,4 @@ public class FacturaController {
         return facturaService.generarFactura(facturaDTO);
     }
 
-    @PostMapping(value = "/imprimirFactura")
-    public void imprimirFactura(@RequestBody DatosFacturaDTO datosFacturaDTO, @RequestParam("mail") String mail){
-        PdfFactura pdfFactura = new PdfFactura();
-        pdfFactura.imprimirFactura(datosFacturaDTO,mail);
-    }
-
 }

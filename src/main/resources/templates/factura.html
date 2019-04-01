@@ -31,10 +31,10 @@
             <div class="encabezado1">
                 <div class="fechade">
                     <label>Fecha:</label>
-                    <input type="date" ng-model="factura.fecha" min="{{fechaMinimaFactura}}"/>
+                    <input type="date" ng-model="factura.fecha" min="{{fechaMinimaFactura}}" ng-disabled="facturaEnviada"/>
                 </div>
                 <div class="tipocomprob">
-                    <select class="tipocomprobsele" ng-model="factura.tipoComprobante" ng-change="actualizarComprobante()">
+                    <select class="tipocomprobsele" ng-model="factura.tipoComprobante" ng-change="actualizarComprobante()" ng-disabled="facturaEnviada">
                         <option value="" disabled selected>Tipo Comprobante</option>
                         <option ng-repeat="comprobante in comprobantes"
                                 value="{{comprobante.value}}">{{comprobante.name}}</option>
@@ -42,17 +42,18 @@
                 </div>
                 <div class="puntode">
                     <label>Punto de Venta:</label>
-                    <input type="text" maxlength="4" class="depunto" ng-model="factura.puntoVenta">
+                    <input type="text" maxlength="4" class="depunto" ng-model="factura.puntoVenta" ng-disabled="facturaEnviada">
                     <label>Nro. de Comprobante:</label>
                     <input type="text" maxlength="8" class="decomprobante" ng-model="factura.nroComprobante" ng-disabled="true">
                 </div>
+                <button ng-click="nuevaFactura()" title="Nueva Factura" class="button">NUEVA FACTURA</button>
             </div>
             <div class="encabezado2">
                 <div class="form1">
                     <div class="form1-form1">
                         <label class="form-label">Sindicato:</label>
-                        <input type="text" maxlength="3" class="form-input4" ng-model="factura.sindicato" ng-change="buscarSindicatoInput()">
-                        <button title="Busca Sindicato" class="button" ng-click="buscarSindicatoModal()">BUSCAR</button>
+                        <input type="text" maxlength="3" class="form-input4" ng-model="factura.sindicato" ng-change="buscarSindicatoInput()" ng-disabled="facturaEnviada">
+                        <button title="Busca Sindicato" class="button" ng-click="buscarSindicatoModal()" ng-disabled="facturaEnviada">BUSCAR</button>
                         <label class="form-label">{{sindicatoNombre}}</label>
                         <label class="form-label">{{sindicatoCuit}}</label>
                     </div>
@@ -76,8 +77,8 @@
 
                     <div class="form1-form2">
                         <label class="form-label">Afiliado:</label>
-                        <input type="text" maxlength="11" class="form-input2" ng-model="factura.afiliado" ng-change="buscarAfiliadoInput()" ng-disabled="afiliadoDeshabilitado">
-                        <button title="Busca Afiliado" class="button" ng-click="buscarAfiliadoModal()" ng-disabled="afiliadoDeshabilitado">BUSCAR</button>
+                        <input type="text" maxlength="11" class="form-input2" ng-model="factura.afiliado" ng-change="buscarAfiliadoInput()" ng-disabled="afiliadoDeshabilitado || facturaEnviada">
+                        <button title="Busca Afiliado" class="button" ng-click="buscarAfiliadoModal()" ng-disabled="afiliadoDeshabilitado || facturaEnviada">BUSCAR</button>
                         <label class="form-label">{{afiliadoNombre}}</label>
                         <label class="form-label">{{afiliadoDni}}</label>
                     </div>
@@ -105,13 +106,13 @@
 
                 </div>
                 <div class="form2">
-                    <select class="sele11" ng-model="factura.situacionIVA">
+                    <select class="sele11" ng-model="factura.situacionIVA" ng-disabled="facturaEnviada">
                         <option value="" disabled selected> Situaciones de IVA</option>
                         <option ng-repeat="situacion in situacionesIva"
                                 value="{{situacion.value}}">{{situacion.name}}</option>
                     </select>
 
-                    <select class="sele11" ng-model="factura.condicionVenta">
+                    <select class="sele11" ng-model="factura.condicionVenta" ng-disabled="facturaEnviada">
                         <option value="" disabled selected> Condición de Venta</option>
                         <option ng-repeat="condicion in condicionesVenta"
                                  value="{{condicion.value}}">{{condicion.name}}</option>
@@ -120,15 +121,15 @@
                 </div>
                 <div class="form3">
                     <label class="form-label">Bonificación %</label>
-                    <input type="number" min="0" max="100" class="form-input3" ng-model="factura.bonificacion" ng-change="actualizarDescuento()">
+                    <input type="number" min="0" max="100" class="form-input3" ng-model="factura.bonificacion" ng-change="actualizarDescuento()" ng-disabled="facturaEnviada">
                 </div>
                 <div class="form4">
                     <label class="form-label">Lista A</label>
-                    <input type="radio" ng-model="factura.listaPrecio" class="form-input-radio" value="A" ng-disabled="listaPreciosDeshabilitada">
+                    <input type="radio" ng-model="factura.listaPrecio" class="form-input-radio" value="A" ng-disabled="listaPreciosDeshabilitada || facturaEnviada">
                     <label class="form-label">Lista B</label>
-                    <input type="radio" ng-model="factura.listaPrecio" class="form-input-radio" value="B" ng-disabled="listaPreciosDeshabilitada">
+                    <input type="radio" ng-model="factura.listaPrecio" class="form-input-radio" value="B" ng-disabled="listaPreciosDeshabilitada || facturaEnviada">
                     <label class="form-label">Lista C</label>
-                    <input type="radio" ng-model="factura.listaPrecio" class="form-input-radio" value="C" ng-disabled="listaPreciosDeshabilitada" ng-checked="true">
+                    <input type="radio" ng-model="factura.listaPrecio" class="form-input-radio" value="C" ng-disabled="listaPreciosDeshabilitada || facturaEnviada" ng-checked="true">
                 </div>
             </div>
             <div class="encabezado3">
@@ -143,22 +144,22 @@
                         <td title="'P.Unitario'">{{articulo.precio}}</td>
                         <td title="'Total'">{{articulo.total}}</td>
                         <td width="65px">
-                            <button value="Editar" title="Editar" class="button" ng-click="editarArticulo(articulo.id)">Edi</button>
+                            <button value="Editar" title="Editar" class="button" ng-click="editarArticulo(articulo.id)" ng-disabled="facturaEnviada">Edi</button>
                             <span></span>
-                            <button value="Borrar" title="Borrar" class="button" ng-click="borrarArticulo(articulo.id)">Bor</button>
+                            <button value="Borrar" title="Borrar" class="button" ng-click="borrarArticulo(articulo.id)" ng-disabled="facturaEnviada">Bor</button>
                         </td>
                     </tr>
                     <tr>
-                        <td><input type="date" ng-model="nuevoArticulo.fecha" placeholder="dd-MM-yyyy" ng-change="buscarProductoInput()"/></td>
+                        <td><input type="date" ng-model="nuevoArticulo.fecha" placeholder="dd-MM-yyyy" ng-change="buscarProductoInput()" ng-disabled="facturaEnviada"/></td>
                         <td>
-                            <input type="text" maxlength="8" ng-model="nuevoArticulo.codigo" ng-change="buscarProductoInput()">
-                            <button value="Buscar" title="Busca Artículo" class="button" ng-click="buscarProductoModal()">buscar</button>
+                            <input type="text" maxlength="8" ng-model="nuevoArticulo.codigo" ng-change="buscarProductoInput()" ng-disabled="facturaEnviada">
+                            <button value="Buscar" title="Busca Artículo" class="button" ng-click="buscarProductoModal()" ng-disabled="facturaEnviada">buscar</button>
                         </td>
                         <td>{{nuevoArticulo.descripcion}}</td>
-                        <td><input type="text" maxlength="7" ng-model="nuevoArticulo.cantidad" ng-change="actualizarNuevoTotal()"></td>
-                        <td><input type="text" maxlength="7" ng-model="nuevoArticulo.precio" ng-change="actualizarNuevoTotal()"></td>
+                        <td><input type="text" maxlength="7" ng-model="nuevoArticulo.cantidad" ng-change="actualizarNuevoTotal()" ng-disabled="facturaEnviada"></td>
+                        <td><input type="text" maxlength="7" ng-model="nuevoArticulo.precio" ng-change="actualizarNuevoTotal()" ng-disabled="facturaEnviada"></td>
                         <td>{{nuevoArticulo.total}}</td>
-                        <td><button value="Guardar" title="Guardar" class="button" ng-click="guardarArticulo()" ng-disabled="agregarArticuloDeshabilitado">Gua</button></td>
+                        <td><button value="Guardar" title="Guardar" class="button" ng-click="guardarArticulo()" ng-disabled="agregarArticuloDeshabilitado || facturaEnviada">Gua</button></td>
                     </tr>
                 </table>
                 <!--MODAL STOCK-->
@@ -181,20 +182,21 @@
             <div class="encabezado4">
                 <div class="form6">
                     <label for="leyenda" class="form-label">Leyenda al Pie del Comprobante:</label>
-                    <textarea id="leyen">{{leyenda}}</textarea>
+                    <textarea id="leyen" ng-disabled="facturaEnviada">{{leyenda}}</textarea>
 
                     <div class="form5">
-                        <label for="cae" class="form-label">CAE:(muestro el cae)</label>
+                        <label for="cae" class="form-label">CAE: {{caeNumero}}</label>
                     </div>
 
                     <div class="form5">
-                        <label for="vtocae" class="form-label">Vto.CAE:(muestro el vto)</label>
+                        <label for="vtocae" class="form-label">Vto.CAE: {{caeVto}}</label>
                     </div>
                     <div class="form5">
-                        <button ng-click="enviar()" value="solicito" title="Solicita CAE al AFIP" class="button" id="accions">Solicitar
+                        <button ng-click="enviar()" value="solicito" title="Solicita CAE al AFIP" class="button" id="accions" ng-disabled="facturaEnviada">Solicitar
                             CAE
                         </button>
                     </div>
+                    <input type="text" class="depunto" ng-model="mail" ng-disabled="facturaEnviada">
 
                 </div>
 

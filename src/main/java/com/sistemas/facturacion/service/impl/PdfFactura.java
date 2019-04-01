@@ -1,6 +1,7 @@
 package com.sistemas.facturacion.service.impl;
 
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfContentByte;
@@ -12,17 +13,25 @@ import com.sistemas.facturacion.service.dto.ArticuloFacturaDTO;
 import com.sistemas.facturacion.service.dto.DatosFacturaDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.imageio.ImageIO;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import javax.mail.util.ByteArrayDataSource;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+@Service
 public class PdfFactura {
 
     @Autowired
@@ -58,7 +67,7 @@ public class PdfFactura {
     @Value("${miMailPass}")
     private String miMailPass;
 
-    public void imprimirFactura(DatosFacturaDTO datosFacturaDTO, String mail) {
+    public void imprimirFactura(DatosFacturaDTO datosFacturaDTO) {
         try {
             PdfReader reader = new PdfReader(facturaTemplate);
             PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(facturaOutput));
@@ -131,7 +140,7 @@ public class PdfFactura {
                 over.addImage(img);
             }
             stamper.close();
-            if (mail!=null && !mail.equals("")) sendMail(mail);
+            if (datosFacturaDTO.getFacturaDTO().getMail()!=null && !datosFacturaDTO.getFacturaDTO().getMail().equals("")) sendMail(datosFacturaDTO.getFacturaDTO().getMail(),stamper);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (DocumentException e) {
@@ -147,29 +156,43 @@ public class PdfFactura {
         over.endText();
     }
 
-    private void sendMail(String mail) {
+    private void sendMail(String mail, PdfStamper stamper) {
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
         props.put("mail.smtp.host", "smtp.gmail.com");
         props.put("mail.smtp.port", "587");
-        Session session = Session.getInstance(props,
-                new javax.mail.Authenticator() {
-                    protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(miMail, miMailPass);
-                    }
-                });
-
         try {
-            Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(miMail));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(mail));
-            message.setSubject("Factura Electrónica");
-            message.setText("");
-//            message.set
-            Transport.send(message);
-        } catch (MessagingException e) {
-            throw new RuntimeException(e);
+            Session session = Session.getInstance(props,
+                    new javax.mail.Authenticator() {
+                        protected PasswordAuthentication getPasswordAuthentication() {
+                            return new PasswordAuthentication(miMail, miMailPass);
+                        }
+                    });
+
+            try {
+                Message message = new MimeMessage(session);
+                message.setFrom(new InternetAddress(miMail));
+                message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(mail));
+                message.setSubject("Factura Electrónica");
+
+                BodyPart bodyPart = new MimeBodyPart();
+                bodyPart.setText("TEST");
+                Multipart multipart = new MimeMultipart();
+                multipart.addBodyPart(bodyPart);
+                bodyPart = new MimeBodyPart();
+                DataSource dataSource = new FileDataSource(facturaOutput);
+                bodyPart.setDataHandler(new DataHandler(dataSource));
+                bodyPart.setFileName("facturaEjemplo.pdf");
+                multipart.addBodyPart(bodyPart);
+                message.setContent(multipart);
+
+                Transport.send(message);
+            } catch (MessagingException e) {
+                throw new RuntimeException(e);
+            }
+        } catch (Exception e){
+            e.printStackTrace();
         }
     }
 

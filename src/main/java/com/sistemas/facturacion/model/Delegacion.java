@@ -76,8 +76,8 @@ public class Delegacion {
     @Column(name = "nombredescuento")
     private String nombreDescuento;
 
-    @Column(name = "persoempre")
-    private String personaEmpresa;
+    //@Column(name = "persoempre")
+    //private String personaEmpresa;
 
     @Column(name = "sitiva")
     private String situacionIva;
@@ -261,13 +261,13 @@ public class Delegacion {
         this.nombreDescuento = nombreDescuento;
     }
 
-    public String getPersonaEmpresa() {
-        return personaEmpresa;
-    }
+    //public String getPersonaEmpresa() {
+    //    return personaEmpresa;
+    //}
 
-    public void setPersonaEmpresa(String personaEmpresa) {
-        this.personaEmpresa = personaEmpresa;
-    }
+    //public void setPersonaEmpresa(String personaEmpresa) {
+    //    this.personaEmpresa = personaEmpresa;
+    //}
 
     public String getSituacionIva() {
         return situacionIva;

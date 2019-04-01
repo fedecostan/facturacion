@@ -24,6 +24,8 @@
             $scope.afiliadoDeshabilitado = true;
             $scope.agregarArticuloDeshabilitado = true;
             $scope.habilitarAfiliado = false;
+            $scope.facturaEnviada = false;
+
 
             var modalSindicato = document.getElementById('modalSindicato');
             var modalAfiliado = document.getElementById('modalAfiliado');
@@ -343,6 +345,7 @@
             };
 
             $scope.enviar = function () {
+                mostrarCargando();
                 var data = {
                     fecha:formatearFecha($scope.factura.fecha),
                     tipoComprobante:$scope.factura.tipoComprobante,
@@ -355,11 +358,18 @@
                     listaPrecio:$scope.factura.listaPrecio,
                     total:$scope.totales.total,
                     leyenda:$scope.leyenda,
-                    articulos:$scope.listaArticulos
+                    articulos:$scope.listaArticulos,
+                    mail:$scope.mail
                 };
                 $http({method: 'POST',url: facturaUrl + 'generarFactura', data: data}).then(
                     function successCallback(response) {
-
+                        ocultarCargando();
+                        if (!response.error){
+                            $scope.factura.nroComprobante = response.data.numeroComprobante;
+                            $scope.caeNumero = response.data.cae;
+                            $scope.caeVto = response.data.fechaVencimiento;
+                            $scope.facturaEnviada = true;
+                        }
                     }, function errorCallback(response) {
                 });
             };
@@ -402,6 +412,10 @@
                         }, function errorCallback(response) {
                     });
                 }
+            }
+
+            $scope.nuevaFactura = function () {
+                $window.location.reload();
             }
         })
 }());

@@ -3,8 +3,8 @@ package com.sistemas.facturacion.service.impl;
 import com.sistemas.facturacion.model.Autorizacion;
 import com.sistemas.facturacion.repository.AutorizacionRepository;
 import com.sistemas.facturacion.service.afipWS.fev1.dif.afip.gov.ar.*;
-import com.sistemas.facturacion.service.afipWS.https.wsaa_afip_gov_ar.ws.services.logincms.LoginCMS;
-import com.sistemas.facturacion.service.afipWS.https.wsaa_afip_gov_ar.ws.services.logincms.LoginCMSService;
+import com.sistemas.facturacion.service.afipWS.https.wsaahomo_afip_gov_ar.ws.services.logincms.LoginCMS;
+import com.sistemas.facturacion.service.afipWS.https.wsaahomo_afip_gov_ar.ws.services.logincms.LoginCMSService;
 import com.sistemas.facturacion.service.dto.FacturaDTO;
 import com.sistemas.facturacion.service.dto.FacturaResponseDTO;
 import org.apache.axis.encoding.Base64;
@@ -80,6 +80,7 @@ public class AfipWS {
                 + "</header>"
                 + "<service>" + "wsfe" + "</service>"
                 + "</loginTicketRequest>";
+        System.out.println(request);
         CMSSignedDataGenerator gen = new CMSSignedDataGenerator();
         ContentSigner sha1Signer = new JcaContentSignerBuilder("SHA1withRSA").build(pKey);
         gen.addSignerInfoGenerator(new JcaSignerInfoGeneratorBuilder(new JcaDigestCalculatorProviderBuilder().setProvider("BC").build()).build(sha1Signer, pCertificate));
