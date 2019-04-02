@@ -177,7 +177,7 @@ public class PdfFactura {
                 message.setSubject("Factura Electrónica");
 
                 BodyPart bodyPart = new MimeBodyPart();
-                bodyPart.setText("TEST");
+                bodyPart.setText("Mail enviado automáticamente por Factura Electrónica. No responda éste mail.");
                 Multipart multipart = new MimeMultipart();
                 multipart.addBodyPart(bodyPart);
                 bodyPart = new MimeBodyPart();
