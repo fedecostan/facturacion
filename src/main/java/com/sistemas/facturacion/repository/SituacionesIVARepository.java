@@ -9,9 +9,9 @@ import java.util.List;
 
 @Repository
 public interface SituacionesIVARepository extends JpaRepository<SituacionesIVA, Long> {
-
-    @Query(value = "SELECT * FROM tsitiva", nativeQuery = true)
-    List<SituacionesIVA> findTodos();
-
     SituacionesIVA findByCodigo(String situacionesIva);
+
+    @Query(value = "SELECT * FROM tsitiva t" +
+            " WHERE t.codigoafip IS NOT NULL", nativeQuery = true)
+    List<SituacionesIVA> findTodos();
 }

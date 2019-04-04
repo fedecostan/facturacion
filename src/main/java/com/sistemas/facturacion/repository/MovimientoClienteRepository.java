@@ -6,7 +6,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MovimientoClienteRepository extends JpaRepository<MovimientoCliente, Long> {
-
-    MovimientoCliente findFirstByTipoComprobanteOrderByNumeroComprobanteDesc(String tipoComprobante);
-
 }

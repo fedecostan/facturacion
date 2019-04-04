@@ -9,12 +9,11 @@ import javax.persistence.*;
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class TitularA {
 
-    @Id
+    @EmbeddedId
+    private TitularAId id;
+
     @Column(name = "delegacion")
     private String delegacion;
-
-    @Column(name = "fechaalta")
-    private String fechaAlta;
 
     @Column(name = "fechabaja")
     private String fechaBaja;
@@ -43,9 +42,13 @@ public class TitularA {
     @Column(name = "beneficiario")
     private String beneficiario;
 
-    @JoinColumn(name = "nroregistro")
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Titular.class, cascade=CascadeType.ALL)
-    private Titular titular;
+    public TitularAId getId() {
+        return id;
+    }
+
+    public void setId(TitularAId id) {
+        this.id = id;
+    }
 
     public String getDelegacion() {
         return delegacion;
@@ -53,14 +56,6 @@ public class TitularA {
 
     public void setDelegacion(String delegacion) {
         this.delegacion = delegacion;
-    }
-
-    public String getFechaAlta() {
-        return fechaAlta;
-    }
-
-    public void setFechaAlta(String fechaAlta) {
-        this.fechaAlta = fechaAlta;
     }
 
     public String getFechaBaja() {
@@ -135,11 +130,4 @@ public class TitularA {
         this.beneficiario = beneficiario;
     }
 
-    public Titular getTitular() {
-        return titular;
-    }
-
-    public void setTitular(Titular titular) {
-        this.titular = titular;
-    }
 }

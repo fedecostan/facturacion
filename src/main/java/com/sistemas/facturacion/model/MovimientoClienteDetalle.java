@@ -9,25 +9,8 @@ import javax.persistence.*;
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class MovimientoClienteDetalle {
 
-    @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
-
-    @Column(name = "fecha")
-    private String fecha;
-
-    @Column(name = "codicomprobante")
-    private String codigoComprobante;
-
-    @Column(name = "nrocomprobante")
-    private String numeroComprobante;
-
-    @Column(name = "tipocomprobante")
-    private String tipoComprobante;
-
-    @Column(name = "orden")
-    private Short orden;
+    @EmbeddedId
+    private MovimientoClienteDetalleId id;
 
     @Column(name = "indicativo")
     private String indicativo;
@@ -134,44 +117,12 @@ public class MovimientoClienteDetalle {
     @Column(name = "ordenflia")
     private int ordenFamilia;
 
-    public String getFecha() {
-        return fecha;
+    public MovimientoClienteDetalleId getId() {
+        return id;
     }
 
-    public void setFecha(String fecha) {
-        this.fecha = fecha;
-    }
-
-    public String getCodigoComprobante() {
-        return codigoComprobante;
-    }
-
-    public void setCodigoComprobante(String codigoComprobante) {
-        this.codigoComprobante = codigoComprobante;
-    }
-
-    public String getNumeroComprobante() {
-        return numeroComprobante;
-    }
-
-    public void setNumeroComprobante(String numeroComprobante) {
-        this.numeroComprobante = numeroComprobante;
-    }
-
-    public String getTipoComprobante() {
-        return tipoComprobante;
-    }
-
-    public void setTipoComprobante(String tipoComprobante) {
-        this.tipoComprobante = tipoComprobante;
-    }
-
-    public Short getOrden() {
-        return orden;
-    }
-
-    public void setOrden(Short orden) {
-        this.orden = orden;
+    public void setId(MovimientoClienteDetalleId id) {
+        this.id = id;
     }
 
     public String getIndicativo() {

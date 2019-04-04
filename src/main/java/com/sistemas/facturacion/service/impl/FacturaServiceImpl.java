@@ -109,10 +109,17 @@ public class FacturaServiceImpl extends AfipWS implements FacturaService {
         FECAEDetRequest detalle = new FECAEDetRequest();
         detalle.setConcepto(empresaRepository.findAll().get(0).getConcepto()); //1- Producto 2- Servicio 3- Producto y Servicio
         if (facturaDTO.getAfiliado()!=null) {
-            Titular titular = titularRepository.findByNumeroRegistro(facturaDTO.getAfiliado());
-            TipoDocumento tipoDocumento = tipoDocumentoRepository.findByCodigo(titular.getTipoDocumento());
-            detalle.setDocTipo(tipoDocumento.getCodigoAfip());
-            detalle.setDocNro(Long.valueOf(titular.getNumeroDocumento()));
+            if (facturaDTO.getOrden()==0) {
+                Titular titular = titularRepository.findByNumeroRegistro(facturaDTO.getAfiliado());
+                TipoDocumento tipoDocumento = tipoDocumentoRepository.findByCodigo(titular.getTipoDocumento());
+                detalle.setDocTipo(tipoDocumento.getCodigoAfip());
+                detalle.setDocNro(Long.valueOf(titular.getNumeroDocumento()));
+            } else {
+                Familiar familiar = familiarRepository.findByNumeroRegistroAndOrden(facturaDTO.getAfiliado(),facturaDTO.getOrden());
+                TipoDocumento tipoDocumento = tipoDocumentoRepository.findByCodigo(familiar.getTipoDocumento());
+                detalle.setDocTipo(tipoDocumento.getCodigoAfip());
+                detalle.setDocNro(Long.valueOf(familiar.getNumeroDocumento()));
+            }
         } else {
             Delegacion delegacion = delegacionRepository.findByCodigo(facturaDTO.getSindicato());
             TipoDocumento tipoDocumento = tipoDocumentoRepository.findByCodigo(delegacion.getTipoDocumento());
@@ -147,12 +154,13 @@ public class FacturaServiceImpl extends AfipWS implements FacturaService {
             TipoComprobante tipoComprobante = tipoComprobanteRepository.findByCodigoAfip(facturaDTO.getTipoComprobante());
             SituacionesIVA situacionesIVA = situacionesIVARepository.findByCodigo(facturaDTO.getSituacionesIva());
             Titular titular = titularRepository.findByNumeroRegistro(facturaDTO.getAfiliado());
-            Familiar familiar = familiarRepository.findByOrden(facturaDTO.getAfiliado());
+            Familiar familiar = familiarRepository.findByNumeroRegistroAndOrden(facturaDTO.getAfiliado(),facturaDTO.getOrden());
             MovimientoCliente movimientoCliente = new MovimientoCliente();
-            movimientoCliente.setFecha(formatearFecha(facturaDTO.getFecha()));
-            movimientoCliente.setCodigoComprobante(tipoComprobante.getCodigo());
-            movimientoCliente.setNumeroComprobante(cae.getNumeroComprobante());
-            movimientoCliente.setTipoComprobante(tipoComprobante.getTipo());
+            MovimientoClienteId movimientoClienteId = new MovimientoClienteId();
+            movimientoClienteId.setFecha(formatearFecha(facturaDTO.getFecha()));
+            movimientoClienteId.setCodigoComprobante(tipoComprobante.getCodigo());
+            movimientoClienteId.setNroComprobante(cae.getNumeroComprobante());
+            movimientoClienteId.setTipoComprobante(tipoComprobante.getTipo());
             if (facturaDTO.getAfiliado()!=null) {
                 movimientoCliente.setCliente(facturaDTO.getAfiliado());
                 movimientoCliente.setQuienes("A");
@@ -161,7 +169,7 @@ public class FacturaServiceImpl extends AfipWS implements FacturaService {
                     movimientoCliente.setOrdenFamilia(0);
                 } else {
                     movimientoCliente.setCodigoFamilia(familiar.getCodigoFamilia());
-                    movimientoCliente.setOrdenFamilia(familiar.getOrden());
+                    movimientoCliente.setOrdenFamilia(familiar.getId().getOrden());
                 }
             } else {
                 movimientoCliente.setCliente(facturaDTO.getSindicato());
@@ -201,15 +209,17 @@ public class FacturaServiceImpl extends AfipWS implements FacturaService {
             movimientoCliente.setOrdenServicio(0);
             movimientoCliente.setDelegacion(facturaDTO.getSindicato());
             movimientoCliente.setCodigoRechazo(" ");
+            movimientoCliente.setId(movimientoClienteId);
             movimientoClienteRepository.save(movimientoCliente);
             Short ord = 0;
             for (ArticuloFacturaDTO articuloFacturaDTO : facturaDTO.getArticulos()){
                 MovimientoClienteDetalle movimientoClienteDetalle = new MovimientoClienteDetalle();
-                movimientoClienteDetalle.setFecha(formatearFecha(facturaDTO.getFecha()));
-                movimientoClienteDetalle.setCodigoComprobante(tipoComprobante.getCodigo());
-                movimientoClienteDetalle.setNumeroComprobante(cae.getNumeroComprobante());
-                movimientoClienteDetalle.setTipoComprobante(tipoComprobante.getTipo());
-                movimientoClienteDetalle.setOrden(ord++);
+                MovimientoClienteDetalleId movimientoClienteDetalleId = new MovimientoClienteDetalleId();
+                movimientoClienteDetalleId.setFecha(formatearFecha(facturaDTO.getFecha()));
+                movimientoClienteDetalleId.setCodigoComprobante(tipoComprobante.getCodigo());
+                movimientoClienteDetalleId.setNroComprobante(cae.getNumeroComprobante());
+                movimientoClienteDetalleId.setTipoComprobante(tipoComprobante.getTipo());
+                movimientoClienteDetalleId.setOrden(ord++);
                 movimientoClienteDetalle.setIndicativo("T");
                 movimientoClienteDetalle.setCodigo(articuloFacturaDTO.getCodigo());
                 movimientoClienteDetalle.setCantidad(new Double(articuloFacturaDTO.getCantidad()));
@@ -238,7 +248,7 @@ public class FacturaServiceImpl extends AfipWS implements FacturaService {
                         movimientoClienteDetalle.setOrdenFamilia(0);
                     } else {
                         movimientoClienteDetalle.setCodigoFamilia(familiar.getCodigoFamilia());
-                        movimientoClienteDetalle.setOrdenFamilia(familiar.getOrden());
+                        movimientoClienteDetalle.setOrdenFamilia(familiar.getId().getOrden());
                     }
                 } else {
                     movimientoClienteDetalle.setQuienes("S");
@@ -257,6 +267,7 @@ public class FacturaServiceImpl extends AfipWS implements FacturaService {
                 movimientoClienteDetalle.setDelegacion(facturaDTO.getSindicato());
                 movimientoClienteDetalle.setBonoDesdeHasta("00000000000000000000");
                 movimientoClienteDetalle.setCosto(0D);
+                movimientoClienteDetalle.setId(movimientoClienteDetalleId);
                 movimientoClienteDetalleRepository.save(movimientoClienteDetalle);
             }
         }

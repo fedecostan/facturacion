@@ -131,12 +131,6 @@ public class Titular {
     @Column(name = "modoenvio")
     private String modoEnvio;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "titular", targetEntity = TitularA.class, cascade=CascadeType.ALL)
-    private List<TitularA> titularAList;
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "titular", targetEntity = Familiar.class, cascade=CascadeType.ALL)
-    private List<Familiar> familiarList;
-
     public String getNumeroRegistro() {
         return numeroRegistro;
     }
@@ -457,19 +451,4 @@ public class Titular {
         this.modoEnvio = modoEnvio;
     }
 
-    public List<TitularA> getTitularAList() {
-        return titularAList;
-    }
-
-    public void setTitularAList(List<TitularA> titularAList) {
-        this.titularAList = titularAList;
-    }
-
-    public List<Familiar> getFamiliarList() {
-        return familiarList;
-    }
-
-    public void setFamiliarList(List<Familiar> familiarList) {
-        this.familiarList = familiarList;
-    }
 }

@@ -12,6 +12,4 @@ public interface TipoComprobanteRepository extends JpaRepository<TipoComprobante
 
     TipoComprobante findByCodigoAfip(Integer codigoAfip);
 
-    @Query(value = "SELECT * FROM tcomprob", nativeQuery = true)
-    List<TipoComprobante> findTodos();
 }

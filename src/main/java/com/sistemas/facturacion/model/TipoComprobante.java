@@ -7,7 +7,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "tcomprob")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class TipoComprobante {
+public class    TipoComprobante {
 
     @Id
     @Column(name = "codigo")

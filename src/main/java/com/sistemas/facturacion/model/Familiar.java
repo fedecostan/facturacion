@@ -3,15 +3,15 @@ package com.sistemas.facturacion.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "familiares")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Familiar {
 
-    @Id
-    @Column(name = "orden")
-    private int orden;
+    @EmbeddedId
+    private FamiliarId id;
 
     @Column(name = "codflia")
     private String codigoFamilia;
@@ -142,16 +142,12 @@ public class Familiar {
     @Column(name = "barra")
     private String barra;
 
-    @JoinColumn(name = "nroregistro")
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Titular.class, cascade=CascadeType.ALL)
-    private Titular titular;
-
-    public int getOrden() {
-        return orden;
+    public FamiliarId getId() {
+        return id;
     }
 
-    public void setOrden(int orden) {
-        this.orden = orden;
+    public void setId(FamiliarId id) {
+        this.id = id;
     }
 
     public String getCodigoFamilia() {
@@ -498,11 +494,4 @@ public class Familiar {
         this.barra = barra;
     }
 
-    public Titular getTitular() {
-        return titular;
-    }
-
-    public void setTitular(Titular titular) {
-        this.titular = titular;
-    }
 }

@@ -14,7 +14,7 @@ public class Empresa {
 
     @Id
     @Column(name = "codigo")
-    private Integer codigo;
+    private short codigo;
 
     @Column(name = "razonsocial")
     private String razonSocial;
@@ -62,16 +62,16 @@ public class Empresa {
     private Integer concepto;
 
     @Column(name = "sitiva")
-    private String situacionIva;
+    private int situacionIva;
 
     @Column(name = "puntoventa")
     private String puntoVenta;
 
-    public Integer getCodigo() {
+    public short getCodigo() {
         return codigo;
     }
 
-    public void setCodigo(Integer codigo) {
+    public void setCodigo(short codigo) {
         this.codigo = codigo;
     }
 
@@ -195,11 +195,11 @@ public class Empresa {
         this.concepto = concepto;
     }
 
-    public String getSituacionIva() {
+    public int getSituacionIva() {
         return situacionIva;
     }
 
-    public void setSituacionIva(String situacionIva) {
+    public void setSituacionIva(int situacionIva) {
         this.situacionIva = situacionIva;
     }
 

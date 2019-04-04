@@ -10,24 +10,19 @@ import java.util.List;
 @Repository
 public interface TitularRepository extends JpaRepository<Titular, Long> {
 
-    @Query("select t from Titular t" +
-            " inner join t.titularAList ta" +
-            " where ta.delegacion = ?1")
-    List<Titular> findBySindicato(String sindicato);
+    @Query(value = "SELECT * FROM titulares t" +
+            " JOIN titularesa a ON t.nroregistro = a.nroregistro" +
+            " WHERE a.delegacion = ?1 AND a.fechabaja = ?2", nativeQuery = true)
+    List<Titular> findByDelegacionAndFechaBaja(String sindicato, String fechaBaja);
 
-    Titular findByNumeroRegistro(String formattedNumber);
+    @Query(value = "SELECT * FROM titulares t" +
+            " JOIN titularesa a ON t.nroregistro = a.nroregistro" +
+            " WHERE a.delegacion = ?1" +
+            " AND t.nroregistro = ?2" +
+            " AND a.fechabaja = ?3", nativeQuery = true)
+    Titular findByDelegacionAndNumeroRegistroAndFechaBaja(String formattedSindicato, String formattedTitular, String fechaBaja);
 
-    @Query("select t from Titular t" +
-            " inner join t.titularAList ta" +
-            " where t.numeroRegistro = ?1" +
-            " and ta.delegacion = ?2")
-    Titular findByNumeroRegistroAndSindicato(String formattedTitular, String formattedSindicato);
-
-    @Query("select t from Titular t" +
-            " inner join t.titularAList ta" +
-            " inner join t.familiarList fa" +
-            " where (t.bloqueado = 'S' or t.bloqueado = 'N')" +
-            " and fa.fechaBaja = '29991231'" +
-            " and (fa.codigoFamilia = '01' or fa.codigoFamilia = '02')")
-    List<Titular> findAllActives();
+    @Query(value = "SELECT * FROM titulares t" +
+            " WHERE t.nroregistro = ?1", nativeQuery = true)
+    Titular findByNumeroRegistro(String afiliado);
 }

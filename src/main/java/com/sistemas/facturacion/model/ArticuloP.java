@@ -9,9 +9,8 @@ import javax.persistence.*;
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class ArticuloP {
 
-    @Id
-    @Column(name = "fechadesde")
-    private String fechaDesde;
+    @EmbeddedId
+    private ArticuloPId id;
 
     @Column(name = "fechahasta")
     private String fechaHasta;
@@ -25,16 +24,12 @@ public class ArticuloP {
     @Column(name = "importec")
     private Double importeC;
 
-    @JoinColumn(name = "rubroarticulo")
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = ArticuloC.class, cascade=CascadeType.ALL)
-    private ArticuloC articuloC;
-
-    public String getFechaDesde() {
-        return fechaDesde;
+    public ArticuloPId getId() {
+        return id;
     }
 
-    public void setFechaDesde(String fechaDesde) {
-        this.fechaDesde = fechaDesde;
+    public void setId(ArticuloPId id) {
+        this.id = id;
     }
 
     public String getFechaHasta() {
@@ -69,11 +64,4 @@ public class ArticuloP {
         this.importeC = importeC;
     }
 
-    public ArticuloC getArticuloC() {
-        return articuloC;
-    }
-
-    public void setArticuloC(ArticuloC articuloC) {
-        this.articuloC = articuloC;
-    }
 }

@@ -18,7 +18,7 @@ public class TipoComprobanteServiceImpl implements TipoComprobanteService {
 
     @Override
     public List<TipoComprobanteDTO> obtenerTodos() {
-        List<TipoComprobante> tipoComprobanteList = tipoComprobanteRepository.findTodos();
+        List<TipoComprobante> tipoComprobanteList = tipoComprobanteRepository.findAll();
         List<TipoComprobanteDTO> tipoComprobanteDTOList = new ArrayList<>();
         for (TipoComprobante tipoComprobante : tipoComprobanteList){
             if (tipoComprobante.getCodigoAfip()!=null && tipoComprobante.getCodigoAfip() > 0) {

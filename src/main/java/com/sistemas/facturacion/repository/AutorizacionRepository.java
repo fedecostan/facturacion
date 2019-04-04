@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface AutorizacionRepository extends JpaRepository<Autorizacion, Long> {
 
     Autorizacion findFirstByOrderByIdDesc();
+
 }

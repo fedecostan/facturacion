@@ -64,22 +64,10 @@ public class FacturaController {
         return delegacionService.buscarDelegacionPorCodigo(codigo);
     }
 
-    @GetMapping(value = "/cargarAfiliados")
-    public @ResponseBody
-    List<TitularDTO> cargarAfiliados(){
-        return titularService.obtenerTodos();
-    }
-
     @GetMapping(value = "/cargarAfiliadosPorSindicato")
     public @ResponseBody
     List<TitularDTO> cargarAfiliadosPorSindicato(@RequestParam("sindicato") String sindicato){
         return titularService.obtenerPorSindicato(sindicato);
-    }
-
-    @GetMapping(value = "/buscarAfiliadoPorId")
-    public @ResponseBody
-    TitularDTO buscarAfiliadoPorId(@RequestParam("id") Long id){
-        return titularService.obtenerPorId(id);
     }
 
     @GetMapping(value = "/buscarAfiliadoPorIdYSindicato")

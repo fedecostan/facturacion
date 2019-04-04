@@ -71,9 +71,6 @@ public class ArticuloC {
     @Column(name = "codbarra")
     private String codigoBarra;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "articuloC", targetEntity = ArticuloP.class, cascade=CascadeType.ALL)
-    private List<ArticuloP> articuloPList;
-
     public String getRubroArticulo() {
         return rubroArticulo;
     }
@@ -234,11 +231,4 @@ public class ArticuloC {
         this.codigoBarra = codigoBarra;
     }
 
-    public List<ArticuloP> getArticuloPList() {
-        return articuloPList;
-    }
-
-    public void setArticuloPList(List<ArticuloP> articuloPList) {
-        this.articuloPList = articuloPList;
-    }
 }

@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface DelegacionRepository extends JpaRepository<Delegacion, Long> {
 
     Delegacion findByCodigo(String codigo);
+
 }

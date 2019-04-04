@@ -10,6 +10,8 @@ import java.util.List;
 @Repository
 public interface CondicionVentaRepository extends JpaRepository<CondicionVenta, Long> {
 
-    @Query(value = "SELECT * FROM tcondvent", nativeQuery = true)
+    CondicionVenta findByCodigo(String condicionesVenta);
+
+    @Query(value = "SELECT * FROM tcondvent t", nativeQuery = true)
     List<CondicionVenta> findTodos();
 }

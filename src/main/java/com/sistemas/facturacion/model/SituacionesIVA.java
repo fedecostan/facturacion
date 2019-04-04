@@ -9,7 +9,6 @@ import javax.persistence.*;
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class SituacionesIVA {
 
-    @Id
     @Column(name = "codigo")
     private String codigo;
 
@@ -28,6 +27,7 @@ public class SituacionesIVA {
     @Column(name = "cuentaapertura")
     private String cuentaApertura;
 
+    @Id
     @Column(name = "codigoafip")
     private Integer codigoAfip;
 

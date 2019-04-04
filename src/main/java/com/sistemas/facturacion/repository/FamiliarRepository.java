@@ -10,16 +10,13 @@ import java.util.List;
 @Repository
 public interface FamiliarRepository extends JpaRepository<Familiar, Integer> {
 
-    @Query("select f from Familiar f" +
-            " inner join f.titular t" +
-            " inner join t.titularAList ta" +
-            " where ta.delegacion = ?1" +
-            " and f.fechaBaja = '29991231'")
-    List<Familiar> findBySindicato(String sindicato);
+    @Query(value = "SELECT * FROM familiares f" +
+            " JOIN titularesa a ON f.nroregistro = a.nroregistro" +
+            " WHERE a.delegacion = ?1 AND f.fechabaja = ?2" +
+            " AND (f.orden = 1 or f.orden = 2)", nativeQuery = true)
+    List<Familiar> findBySindicatoAndFechaBaja(String sindicato, String fechaBaja);
 
-    @Query("select f from Familiar f" +
-            " where f.fechaBaja = '29991231'")
-    List<Familiar> findAllActives();
-
-    Familiar findByOrden(String afiliado);
+    @Query(value = "SELECT * FROM familiares f" +
+            " WHERE f.nroregistro = ?1 AND f.orden = ?2", nativeQuery = true)
+    Familiar findByNumeroRegistroAndOrden(String afiliado, int orden);
 }

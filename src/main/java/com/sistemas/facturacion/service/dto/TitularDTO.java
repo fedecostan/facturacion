@@ -2,7 +2,7 @@ package com.sistemas.facturacion.service.dto;
 
 public class TitularDTO {
 
-    private String value;
+    private int value;
     private String name;
     private String sindicato;
     private String ioma;
@@ -10,12 +10,13 @@ public class TitularDTO {
     private String familia;
     private String dni;
     private String bloqueado;
+    private int orden;
 
-    public String getValue() {
+    public int getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(int value) {
         this.value = value;
     }
 
@@ -75,4 +76,11 @@ public class TitularDTO {
         this.bloqueado = bloqueado;
     }
 
+    public int getOrden() {
+        return orden;
+    }
+
+    public void setOrden(int orden) {
+        this.orden = orden;
+    }
 }

@@ -8,9 +8,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "tcondvent")
+@Table(name = "tprovincia")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class CondicionVenta {
+public class Provincia {
 
     @Id
     @Column(name = "codigo")
@@ -18,15 +18,6 @@ public class CondicionVenta {
 
     @Column(name = "descripcion")
     private String descripcion;
-
-    @Column(name = "indicativo")
-    private String indicativo;
-
-    @Column(name = "dias")
-    private Integer dias;
-
-    @Column(name = "codigoafip")
-    private Integer codigoAfip;
 
     public String getCodigo() {
         return codigo;
@@ -42,29 +33,5 @@ public class CondicionVenta {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
-    }
-
-    public String getIndicativo() {
-        return indicativo;
-    }
-
-    public void setIndicativo(String indicativo) {
-        this.indicativo = indicativo;
-    }
-
-    public Integer getDias() {
-        return dias;
-    }
-
-    public void setDias(Integer dias) {
-        this.dias = dias;
-    }
-
-    public Integer getCodigoAfip() {
-        return codigoAfip;
-    }
-
-    public void setCodigoAfip(Integer codigoAfip) {
-        this.codigoAfip = codigoAfip;
     }
 }
