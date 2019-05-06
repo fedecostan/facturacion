@@ -1,241 +1,522 @@
-<!DOCTYPE html>
+<!doctype html>
 <html ng-app="myApp" xmlns:th="http://www.springframework.org/schema/mvc">
 <head>
     <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=100%, initial-scale=1">
-    <meta content="width=1336 px">
-    <link rel="icon" type="image/png" th:href="@{/img/AMTMB.jpg}"/>
-    <link rel="stylesheet" th:href="@{/css/ng-table.min.css}">
-    <!--<link rel="stylesheet" th:href="@{/css/bootstrap.css}">-->
-    <link rel="stylesheet" th:href="@{/css/app.css}">
-    <title>A.M.T.M.B.</title>
+    <link rel="stylesheet" type="text/css" th:srchref="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" type="text/css" th:srchref="@{/css/style.css"}>
+    <script th:src="@{/css/jquery-3.3.1.slim.min.js}"></script>
+    <script th:src="@{/css/popper.min.js}"></script>
+    <script th:src="@{/css/bootstrap.min.js}"></script>
 </head>
 <script th:src="@{/js/lib/angular.min.js}"></script>
 <script th:src="@{/js/app.js}"></script>
 <script th:src="@{/js/controllers/facturaControllers.js}"></script>
-<script th:src="@{/js/lib/ng-table.min.js}"></script>
-<body class="fondo">
-<div class="agrupar" ng-controller="FacturaController">
-    <header>
+<body style="background: white;">
+<div class="container" style="margin-top: 5px; border: 1px solid black; background: white;">
+    <div class="cell">
         <div class="cabecera">
-            <h1>Factura Electronica</h1>
-        </div>
-        <div id="izqui">
-            <h5> {{direccion}} </h5>
-            <h5> {{telefono}} </h5>
-        </div>
-    </header>
-    <nav class="menunav"></nav>
-    <section>
-        <div class="menu">
-            <div class="encabezado1">
-                <div class="fechade">
-                    <label>Fecha:</label>
-                    <input type="date" ng-model="factura.fecha" min="{{fechaMinimaFactura}}" ng-disabled="facturaEnviada"/>
+            <div class="cell">
+                <div id="titulo">Factura Electronica</div>
+                <div class="row" style="padding: 0px; margin-top: 10px;">
+                    <div class="cell" style="text-align: right;">
+                        <button type="button" class="btn btn-primary" ng-click="nuevaFactura()">NUEVA FACTURA</button>
+                    </div>
                 </div>
-                <div class="tipocomprob">
-                    <select class="tipocomprobsele" ng-model="factura.tipoComprobante" ng-change="actualizarComprobante()" ng-disabled="facturaEnviada">
-                        <option value="" disabled selected>Tipo Comprobante</option>
-                        <option ng-repeat="comprobante in comprobantes"
-                                value="{{comprobante.value}}">{{comprobante.name}}</option>
+            </div>
+        </div>
+        <div class="contenido">
+            <div class="cell">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Fecha</span>
+                    </div>
+                    <input class="form-control" type="date" ng-model="factura.fecha" min="{{fechaMinimaFactura}}" ng-disabled="facturaEnviada">
+                </div>
+            </div>
+            <div class="cell">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text">Tipo Comprobante</label>
+                    </div>
+                    <select class="custom-select" ng-model="factura.tipoComprobante" ng-change="actualizarComprobante()" ng-disabled="facturaEnviada">
+                        <option selected disabled></option>
+                        <option ng-repeat="comprobante in comprobantes" value="{{comprobante.value}}">{{comprobante.name}}</option>
                     </select>
                 </div>
-                <div class="puntode">
-                    <label>Punto de Venta:</label>
-                    <input type="text" maxlength="4" class="depunto" ng-model="factura.puntoVenta" ng-disabled="facturaEnviada">
-                    <label>Nro. de Comprobante:</label>
-                    <input type="text" maxlength="8" class="decomprobante" ng-model="factura.nroComprobante" ng-disabled="true">
-                </div>
-                <button ng-click="nuevaFactura()" title="Nueva Factura" class="button">NUEVA FACTURA</button>
             </div>
-            <div class="encabezado2">
-                <div class="form1">
-                    <div class="form1-form1">
-                        <label class="form-label">Sindicato:</label>
-                        <input type="text" maxlength="3" class="form-input4" ng-model="factura.sindicato" ng-change="buscarSindicatoInput()" ng-disabled="facturaEnviada">
-                        <button title="Busca Sindicato" class="button" ng-click="buscarSindicatoModal()" ng-disabled="facturaEnviada">BUSCAR</button>
-                        <label class="form-label">{{sindicatoNombre}}</label>
-                        <label class="form-label">{{sindicatoCuit}}</label>
+            <div class="cell">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text">Punto de Venta</label>
                     </div>
-
-                    <!--MODAL SINDICATO-->
-                    <div id="modalSindicato" class="modal">
-                        <div class="modal-content">
-                            <span class="close" ng-click="cerrarModal()">&times;</span>
-                            <table ng-table="sindicatosTable" class="table" show-filter="true">
-                                <tr ng-repeat="sindicato in $data">
-                                    <td title="'Código'" filter="{ value: 'text'}" sorteable="'value'">{{sindicato.value}}</td>
-                                    <td title="'Nombre'" filter="{ name: 'text'}" sorteable="'name'">{{sindicato.name}}</td>
-                                    <td width="65px">
-                                        <button value="Seleccionar" title="Seleccionar" class="button" ng-click="seleccionSindicato(sindicato.value, sindicato.name, sindicato.cuit)">Este!</button>
-                                    </td>
-                                </tr>
-                            </table>
-                            <button title="Limpiar" class="button" ng-click="deseleccionarSindicato()">LIMPIAR</button>
+                    <select class="custom-select" ng-model="factura.puntoVenta" ng-disabled="facturaEnviada">
+                        <option selected disabled></option>
+                        <option ng-repeat="ptoVenta in ptoVentas" value="{{ptoVenta.value}}">{{ptoVenta.name}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="cell">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Nro Comp</span>
+                    </div>
+                    <input type="text" class="form-control" disabled>
+                </div>
+            </div>
+        </div>
+        <div class="contenido">
+            <div class="cell">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Sindicato</span>
+                    </div>
+                    <input type="text" class="form-control" ng-model="factura.puntoVenta" ng-disabled="facturaEnviada">
+                    <div class="input-group-prepend">
+                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#buscarSindicatoModal" ng-click="buscarSindicatoModal()" ng-disabled="facturaEnviada">Buscar</button>
+                    </div>
+                    <input type="text" class="form-control" value="{{sindicatoNombre}}" disabled>
+                </div>
+            </div>
+            <div class="cell">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Afiliado</span>
+                    </div>
+                    <input type="text" class="form-control" ng-model="factura.afiliado" ng-change="buscarAfiliadoInput()" ng-disabled="afiliadoDeshabilitado || facturaEnviada">
+                    <div class="input-group-prepend">
+                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#buscarAfiliadoModal" ng-click="buscarAfiliadoModal()" ng-disabled="afiliadoDeshabilitado || facturaEnviada">Buscar</button>
+                    </div>
+                    <input type="text" class="form-control" value="{{afiliadoNombre}}" disabled>
+                </div>
+                <div class="cell">
+                    <div class="cell">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">@</span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="Mail">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                    <input type="checkbox">
+                                </div>
+                            </div>
                         </div>
                     </div>
-
-                    <div class="form1-form2">
-                        <label class="form-label">Afiliado:</label>
-                        <input type="text" maxlength="11" class="form-input2" ng-model="factura.afiliado" ng-change="buscarAfiliadoInput()" ng-disabled="afiliadoDeshabilitado || facturaEnviada">
-                        <button title="Busca Afiliado" class="button" ng-click="buscarAfiliadoModal()" ng-disabled="afiliadoDeshabilitado || facturaEnviada">BUSCAR</button>
-                        <label class="form-label">{{afiliadoNombre}}</label>
-                        <label class="form-label">{{afiliadoDni}}</label>
-                    </div>
-
-                    <!--MODAL AFILIADO-->
-                    <div id="modalAfiliado" class="modal">
-                        <div class="modal-content">
-                            <span class="close" ng-click="cerrarModal()">&times;</span>
-                            <table ng-table="afiliadosTable" class="table" show-filter="true">
-                                <tr ng-repeat="afiliado in $data">
-                                    <td title="'Sindicato'" filter="{ sindicato: 'text'}" sorteable="'sindicato'">{{afiliado.sindicato}}</td>
-                                    <td title="'Nro IOMA'" filter="{ ioma: 'text'}" sorteable="'ioma'">{{afiliado.ioma}}</td>
-                                    <td title="'Barra'" filter="{ barra: 'text'}" sorteable="'barra'">{{afiliado.barra}}</td>
-                                    <td title="'Nombre'" filter="{ name: 'text'}" sorteable="'nombre'">{{afiliado.name}}</td>
-                                    <td title="'Cód. Familia'" filter="{ familia: 'text'}" sorteable="'familia'">{{afiliado.familia}}</td>
-                                    <td title="'Nro. Documento'" filter="{ dni: 'text'}" sorteable="'dni'">{{afiliado.dni}}</td>
-                                    <td title="'Bloqueo'" filter="{ bloqueo: 'text'}" sorteable="'bloqueo'">{{afiliado.bloqueado}}</td>
-                                    <td width="65px">
-                                        <button value="Seleccionar" title="Seleccionar" class="button" ng-click="seleccionAfiliado(afiliado.value, afiliado.name, afiliado.dni)">Este!</button>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="form2">
-                    <select class="sele11" ng-model="factura.situacionIVA" ng-disabled="facturaEnviada">
-                        <option value="" disabled selected> Situaciones de IVA</option>
-                        <option ng-repeat="situacion in situacionesIva"
-                                value="{{situacion.value}}">{{situacion.name}}</option>
-                    </select>
-
-                    <select class="sele11" ng-model="factura.condicionVenta" ng-disabled="facturaEnviada">
-                        <option value="" disabled selected> Condición de Venta</option>
-                        <option ng-repeat="condicion in condicionesVenta"
-                                 value="{{condicion.value}}">{{condicion.name}}</option>
-                    </select>
-
-                </div>
-                <div class="form3">
-                    <label class="form-label">Bonificación %</label>
-                    <input type="number" min="0" max="100" class="form-input3" ng-model="factura.bonificacion" ng-change="actualizarDescuento()" ng-disabled="facturaEnviada">
-                </div>
-                <div class="form4">
-                    <label class="form-label">Lista A</label>
-                    <input type="radio" ng-model="factura.listaPrecio" class="form-input-radio" value="A" ng-disabled="listaPreciosDeshabilitada || facturaEnviada">
-                    <label class="form-label">Lista B</label>
-                    <input type="radio" ng-model="factura.listaPrecio" class="form-input-radio" value="B" ng-disabled="listaPreciosDeshabilitada || facturaEnviada">
-                    <label class="form-label">Lista C</label>
-                    <input type="radio" ng-model="factura.listaPrecio" class="form-input-radio" value="C" ng-disabled="listaPreciosDeshabilitada || facturaEnviada" ng-checked="true">
                 </div>
             </div>
-            <div class="encabezado3">
-                <div class=""></div>
-
-                <table ng-table="articulosTable" class="table" show-filter="false">
-                    <tr ng-repeat="articulo in $data">
-                        <td title="'Fecha'">{{articulo.fecha}}</td>
-                        <td title="'Código de Artículo'">{{articulo.codigo}}</td>
-                        <td title="'Descripción'">{{articulo.descripcion}}</td>
-                        <td title="'Cantidad'">{{articulo.cantidad}}</td>
-                        <td title="'P.Unitario'">{{articulo.precio}}</td>
-                        <td title="'Total'">{{articulo.total}}</td>
-                        <td width="65px">
-                            <button value="Editar" title="Editar" class="button" ng-click="editarArticulo(articulo.id)" ng-disabled="facturaEnviada">Edi</button>
-                            <span></span>
-                            <button value="Borrar" title="Borrar" class="button" ng-click="borrarArticulo(articulo.id)" ng-disabled="facturaEnviada">Bor</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><input type="date" ng-model="nuevoArticulo.fecha" placeholder="dd-MM-yyyy" ng-change="buscarProductoInput()" ng-disabled="facturaEnviada"/></td>
-                        <td>
-                            <input type="text" maxlength="8" ng-model="nuevoArticulo.codigo" ng-change="buscarProductoInput()" ng-disabled="facturaEnviada">
-                            <button value="Buscar" title="Busca Artículo" class="button" ng-click="buscarProductoModal()" ng-disabled="facturaEnviada">buscar</button>
-                        </td>
-                        <td>{{nuevoArticulo.descripcion}}</td>
-                        <td><input type="text" maxlength="7" ng-model="nuevoArticulo.cantidad" ng-change="actualizarNuevoTotal()" ng-disabled="facturaEnviada"></td>
-                        <td><input type="text" maxlength="7" ng-model="nuevoArticulo.precio" ng-change="actualizarNuevoTotal()" ng-disabled="facturaEnviada"></td>
-                        <td>{{nuevoArticulo.total}}</td>
-                        <td><button value="Guardar" title="Guardar" class="button" ng-click="guardarArticulo()" ng-disabled="agregarArticuloDeshabilitado || facturaEnviada">Gua</button></td>
-                    </tr>
-                </table>
-                <!--MODAL STOCK-->
-                <div id="modalProducto" class="modal">
-                    <div class="modal-content">
-                        <span class="close" ng-click="cerrarModal()">&times;</span>
-                        <table ng-table="productosTable" class="table" show-filter="true">
-                            <tr ng-repeat="producto in $data">
-                                <td title="'Código'" filter="{ codigo: 'number'}" sorteable="'codigo'">{{producto.value}}</td>
-                                <td title="'Desipcion'" filter="{ name: 'text'}" sorteable="'descripcion'">{{producto.name}}</td>
-                                <td title="'Stock'" filter="{ stock: 'number'}" sorteable="'stock'">{{producto.stock}}</td>
-                                <td width="65px">
-                                    <button value="Seleccionar" title="Seleccionar" class="button" ng-disabled="producto.stock==0" ng-click="seleccionProducto(producto.value, producto.name, producto.precioA, producto.precioB, producto.precioC, producto.stock)">Este!</button>
-                                </td>
-                            </tr>
-                        </table>
+        </div>
+        <div class="contenido">
+            <div class="cell" style="min-width: 340px;">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text">Situación IVA</label>
+                    </div>
+                    <select class="custom-select" ng-model="factura.situacionIVA" ng-disabled="facturaEnviada">
+                        <option selected disabled></option>
+                        <option ng-repeat="situacion in situacionesIva" value="{{situacion.value}}">{{situacion.name}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="cell" style="min-width: 340px;">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text">Condicion Venta</label>
+                    </div>
+                    <select class="custom-select" ng-model="factura.condicionVenta" ng-disabled="facturaEnviada">
+                        <option selected disabled></option>
+                        <option ng-repeat="condicion in condicionesVenta" value="{{condicion.value}}">{{condicion.name}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="cell">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Bonificación</span>
+                    </div>
+                    <input type="number" class="form-control" ng-model="factura.bonificacion" ng-change="actualizarDescuento()" ng-disabled="facturaEnviada">
+                    <div class="input-group-append">
+                        <span class="input-group-text">%</span>
                     </div>
                 </div>
             </div>
-            <div class="encabezado4">
-                <div class="form6">
-                    <label for="leyenda" class="form-label">Leyenda al Pie del Comprobante:</label>
-                    <textarea id="leyen" ng-disabled="facturaEnviada">{{leyenda}}</textarea>
-
-                    <div class="form5">
-                        <label for="cae" class="form-label">CAE: {{caeNumero}}</label>
+            <div class="cell" style="max-width: 185px;">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text">Lista Precio</label>
                     </div>
-
-                    <div class="form5">
-                        <label for="vtocae" class="form-label">Vto.CAE: {{caeVto}}</label>
-                    </div>
-                    <div class="form5">
-                        <button ng-click="enviar()" value="solicito" title="Solicita CAE al AFIP" class="button" id="accions" ng-disabled="facturaEnviada">Solicitar
-                            CAE
-                        </button>
-                    </div>
-                    <input type="text" class="depunto" ng-model="mail" ng-disabled="facturaEnviada">
-
+                    <select class="custom-select" ng-model="factura.listaPrecio" ng-disabled="listaPreciosDeshabilitada || facturaEnviada">
+                        <option selected disabled></option>
+                        <option value="1">A</option>
+                        <option value="2">B</option>
+                        <option value="3">C</option>
+                    </select>
                 </div>
-
-                <div class="totales">
-                    <table>
+            </div>
+        </div>
+        <div class="contenido">
+            <div class="cell">
+                <div class="row" style="padding-bottom: 0px; table-responsive-sm">
+                    <table class="table table-hover table-striped table-sm" style="margin-bottom: 0px;">
+                        <caption></caption>
+                        <thead class="thead-light">
                         <tr>
-                            <td>Subtotal</td>
-                            <td width="150px">{{totales.subtotal}}</td>
+                            <th scope="col" style="width: 100px;">Fecha</th>
+                            <th scope="col" style="width: 100px;">Codigo</th>
+                            <th scope="col">Descripción</th>
+                            <th scope="col" style="width: 100px;">Cantidad</th>
+                            <th scope="col" style="width: 130px;">Precio Unitario</th>
+                            <th scope="col" style="width: 100px;">Total</th>
+                            <th scope="col" style="width: 120px;"></th>
                         </tr>
-                        <tr>
-                            <td>Descuento</td>
-                            <td>{{totales.descuento}}</td>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="articulo in articulos">
+                            <td>{{articulo.fecha}}</td>
+                            <td>{{articulo.codigo}}</td>
+                            <td>{{articulo.descripcion}}</td>
+                            <td>{{articulo.cantidad}}</td>
+                            <td>{{articulo.precio}}</td>
+                            <td>{{articulo.total}}</td>
+                            <td>
+                                <button type="button" class="btn btn-outline-primary btn-sm" data-toggle="modal" data-target="#editarProductoModal" ng-click="editarArticulo(articulo.id)" ng-disabled="facturaEnviada">
+                                    <img src="https://image.flaticon.com/icons/png/512/212/212218.png" class="img-fluid" alt="Responsive image" style="width: 20px">
+                                </button>
+                                <button type="button" class="btn btn-outline-danger btn-sm" data-toggle="modal" data-target="#removerProductoModal" ng-click="borrarArticulo(articulo.id)" ng-disabled="facturaEnviada">
+                                    <img src="https://www.clker.com/cliparts/4/7/F/F/w/I/trash-red.svg.med.png" class="img-fluid" alt="Responsive image" style="width: 20px">
+                                </button>
+                            </td>
                         </tr>
-                        <tr>
-                            <td>Total</td>
-                            <td>{{totales.total}}</td>
-                        </tr>
+                        </tbody>
                     </table>
                 </div>
-
+                <div class="row" style="padding: 0px;">
+                    <div class="cell" style="text-align: center;">
+                        <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#buscarProductoModal" ng-click="buscarProductoModal()" ng-disabled="facturaEnviada">
+                            <img src="https://cdn0.iconfinder.com/data/icons/social-messaging-ui-color-shapes/128/add-circle-blue-512.png" class="img-fluid" alt="Responsive image" style="width: 30px">
+                        </button>
+                    </div>
+                </div>
+                <div class="row" style="padding: 0px 10px;">
+                    <div class="cell" style="padding: 0px 5px;">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" style="width: 100px;">Subtotal</span>
+                            </div>
+                            <div class="input-group-append">
+                                <span class="input-group-text">$</span>
+                            </div>
+                            <input type="text" class="form-control" value="{{totales.subtotal}}" disabled>
+                        </div>
+                    </div>
+                    <div class="cell" style="padding: 0px 5px;">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" style="width: 100px;">Descuento</span>
+                            </div>
+                            <div class="input-group-append">
+                                <span class="input-group-text">$</span>
+                            </div>
+                            <input type="text" class="form-control" value="{{totales.descuento}}" disabled>
+                        </div>
+                    </div>
+                    <div class="cell" style="padding: 0px 5px;">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" style="width: 100px; font-weight:bold;">Total</span>
+                            </div>
+                            <div class="input-group-append">
+                                <span class="input-group-text" style="font-weight:bold;">$</span>
+                            </div>
+                            <input type="text" class="form-control" style="font-weight:bold;" value="{{totales.total}}" disabled>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="padding-top: 0px;">
+                    <div class="cell">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Leyenda</span>
+                            </div>
+                            <input type="text" class="form-control" value="{{leyenda}}" ng-disabled="facturaEnviada">
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <!--MODAL ERROR-->
-        <div id="modalError" class="modal">
-            <div class="modal-content">
-                <span class="close" ng-click="cerrarModal()">&times;</span>
-                <h2> {{mensajeError}} </h2>
+        <div class="contenido">
+            <div class="cell" style="text-align: center;">
+                <button type="button" class="btn btn-success" style="width: 800px" ng-click="enviar()" ng-disabled="facturaEnviada">SOLICITAR CAE</button>
             </div>
         </div>
-        <!--MODAL CARGANDO-->
-        <div id="modalCargando" class="modal">
-            <div class="modal-content">
-                <img th:src="@{/img/FORT.gif}" alt="Cargando">
+        <div class="contenido">
+            <div class="cell" style="text-align: center;">
+                <img src="https://thumbs.gfycat.com/ObviousQuarrelsomeIntermediateegret.webp" style="width: : 30px; height: 30px;">
             </div>
         </div>
-    </section>
-    <footer id="pie">
-        pie
-    </footer>
+        <div class="contenido">
+            <div class="cell">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">CAE</span>
+                    </div>
+                    <input type="text" class="form-control" value="{{caeNumero}}" disabled>
+                </div>
+            </div>
+            <div class="cell">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Vto. CAE</span>
+                    </div>
+                    <input type="text" class="form-control" value="{{caeVto}}" disabled>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="buscarSindicatoModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Sindicatos</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control">
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-success">Buscar</button>
+                    </div>
+                </div>
+                <div class="row" style="padding-bottom: 0px; table-responsive-sm">
+                    <table class="table table-hover table-striped table-sm" style="margin-bottom: 0px;">
+                        <thead class="thead-light">
+                        <tr>
+                            <th scope="col" style="width: 100px;">Codigo</th>
+                            <th scope="col">Nombre</th>
+                            <th style="width: 60px"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="sindicato in sindicatos">
+                            <td>{{sindicato.value}}</td>
+                            <td>{{sindicato.name}}</td>
+                            <td>
+                                <button type="button" class="btn btn-outline-primary btn-sm" ng-click="seleccionSindicato(sindicato.value, sindicato.name, sindicato.cuit)">
+                                    <img src="https://www.freeiconspng.com/uploads/blue-tick-icon-1.png" class="img-fluid" alt="Responsive image" style="width: 20px">
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Salir</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="buscarAfiliadoModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered  modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Afiliados</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control">
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-success">Buscar</button>
+                    </div>
+                </div>
+                <div class="row" style="padding-bottom: 0px; table-responsive-sm">
+                    <table class="table table-hover table-striped table-sm" style="margin-bottom: 0px;">
+                        <thead class="thead-light">
+                        <tr>
+                            <th scope="col" style="width: 100px;">Nro IOMA</th>
+                            <th scope="col">Barra</th>
+                            <th scope="col" style="width: 200px">Nombre</th>
+                            <th scope="col">Cod. Familia</th>
+                            <th scope="col">Nro. Documento</th>
+                            <th scope="col">Bloqueo</th>
+                            <th style="width: 60px"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="afiliado in afiliados">
+                            <td>{{afiliado.ioma}}</td>
+                            <td>{{afiliado.barra}}</td>
+                            <td>{{afiliado.name}}</td>
+                            <td>{{afiliado.familia}}</td>
+                            <td>{{afiliado.dni}}</td>
+                            <td>{{afiliado.bloqueado}}</td>
+                            <td>
+                                <button type="button" class="btn btn-outline-primary btn-sm" ng-click="seleccionAfiliado(afiliado.value, afiliado.name, afiliado.dni)">
+                                    <img src="https://www.freeiconspng.com/uploads/blue-tick-icon-1.png" class="img-fluid" alt="Responsive image" style="width: 20px">
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Salir</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="buscarProductoModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered  modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Productos</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="cell">
+                    <div class="contenido">
+                        <div class="cell">
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control">
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-success">Buscar</button>
+                                </div>
+                            </div>
+                            <div class="row" style="padding-bottom: 0px; table-responsive-sm">
+                                <table class="table table-hover table-striped table-sm" style="margin-bottom: 0px;">
+                                    <thead class="thead-light">
+                                    <tr>
+                                        <th scope="col" style="width: 100px;">Codigo</th>
+                                        <th scope="col">Descripción</th>
+                                        <th scope="col" style="width: 60px">Stock</th>
+                                        <th style="width: 60px"></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr ng-repeat="producto in productos">
+                                        <td>{{producto.value}}</td>
+                                        <td>{{producto.name}}</td>
+                                        <td>{{producto.stock}}</td>
+                                        <td>
+                                            <button type="button" class="btn btn-outline-primary btn-sm" data-toggle="modal" data-target="#editarProductoModal" ng-disabled="producto.stock==0" ng-click="seleccionProducto(producto.value, producto.name, producto.precioA, producto.precioB, producto.precioC, producto.stock)">
+                                                <img src="https://www.freeiconspng.com/uploads/blue-tick-icon-1.png" class="img-fluid" alt="Responsive image" style="width: 20px">
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Salir</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="editarProductoModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered  modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Producto</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="cell">
+                    <div class="contenido">
+                        <div class="cell">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Fecha</span>
+                                </div>
+                                <input class="form-control" type="date">
+                            </div>
+                        </div>
+                        <div class="cell">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Codigo</span>
+                                </div>
+                                <input type="text" class="form-control" value="101" disabled>
+                            </div>
+                        </div>
+                        <div class="cell">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Descripción</span>
+                                </div>
+                                <input type="text" class="form-control" value="Smart TV" disabled>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="contenido">
+                        <div class="cell">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Cantidad</span>
+                                </div>
+                                <input type="number" class="form-control" value="1">
+                            </div>
+                        </div>
+                        <div class="cell">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Precio Unitario</span>
+                                </div>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">$</span>
+                                </div>
+                                <input type="number" class="form-control">
+                            </div>
+                        </div>
+                        <div class="cell">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Total</span>
+                                </div>
+                                <div class="input-group-append">
+                                    <span class="input-group-text">$</span>
+                                </div>
+                                <input type="text" class="form-control" disabled>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary">Guardar</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Salir</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="removerProductoModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered  modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Remover Producto</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary">Si</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Salir</button>
+            </div>
+        </div>
+    </div>
 </div>
 </body>
-</html>
+<html>
