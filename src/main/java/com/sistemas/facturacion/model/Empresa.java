@@ -59,7 +59,7 @@ public class Empresa {
     private String comprobantes;
 
     @Column(name = "concepto")
-    private Integer concepto;
+    private int concepto;
 
     @Column(name = "sitiva")
     private int situacionIva;
